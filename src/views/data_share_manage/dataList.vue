@@ -1,0 +1,318 @@
+<template>
+  <div class="app-container calendar-list-container">
+    <div class="filter-container">
+      <div style="float:left;">
+        <el-input
+          v-model="listQuery.name"
+          style="width: 200px;"
+          class="filter-item"
+          placeholder="名称"
+          @keyup.enter.native="handleFilter"
+        />
+        <el-input
+          v-model="listQuery.type"
+          style="width: 200px;"
+          class="filter-item"
+          placeholder="类别"
+          @keyup.enter.native="handleFilter"
+        />
+      </div>
+      <div style="float:left;margin-left:230px;">
+        <el-button v-waves type="primary" icon="el-icon-search" @click="handleFilter">
+          查找
+        </el-button>
+        <el-button v-waves type="info" icon="el-icon-refresh" @click="resetListQuery">
+          重置
+        </el-button>
+      </div>
+    </div>
+    <div style="margin-top:10px;margin-bottom:10px;clear:both;">
+      <span style="font-size:15px; font-weight:bold;">数据清单:</span>
+    </div>
+
+    <div class="table">
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="dataList.slice(
+          (listQuery.pages - 1) * listQuery.rows,
+          listQuery.pages * listQuery.rows
+        )"
+        element-loading-text="给我一点时间"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%"
+        :height="fullHeight-400"
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column align="center" label="序号" width="65" type="index" />
+        <el-table-column align="center" label="名称" width="150px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.dataName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="所属类别" width="150px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.typeId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="访问权限" width="100">
+          <template slot-scope="scope">
+            <span v-if="scope.row.accessRight == '1'">无条件访问</span>
+            <span v-if="scope.row.accessRight == '2'">申请后访问</span>
+            <span v-if="scope.row.accessRight == '3'">可申请访问但禁止查看详情</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="操作"
+          width="305px"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              style="margin-left:10px"
+              @click="handleApply(scope.row)"
+            >
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination-container">
+        <el-pagination
+          background
+          :current-page="listQuery.pages"
+          :page-sizes="[5, 10, 20, 30, 50]"
+          :page-size="listQuery.rows"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
+    <el-dialog v-dialogDrag title="数据详情" :visible.sync="dialogDataList" width="1300px" top="7vh">
+      <div v-if="dialogDataList">
+        <edit-share ref="shareData" :data="data" />
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDataList = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogReason = true">
+          申请使用
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      v-dialogDrag
+      title="申请理由"
+      :visible.sync="dialogReason"
+      center
+      top="7vh"
+      width="300px"
+      style="margin-top: 150px;"
+    >
+      <el-input v-model="applyReason" type="textarea" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogReason = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogReason=false;dialogDataList=false;apply()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import waves from '@/directive/waves' // 水波纹指令
+import editShare from './edit-share'
+import '@/utils/wsCluster.js'
+import { getDataShareInfoBase, getMyShareParam, addApplication } from '@/api/dataShare'
+export default {
+  directives: {
+    waves
+  },
+  components: {
+    'edit-share': editShare
+  },
+  data() {
+    return {
+      dialogDataList: false,
+      tableKey: 0,
+      listLoading: true,
+      listQuery: {
+        name: '',
+        type: '',
+        pages: 1,
+        rows: 10
+      },
+      total: 0,
+      dataList: [],
+      fullHeight: document.documentElement.clientHeight,
+      data: {},
+      // 申请理由
+      dialogReason: false,
+      applyReason: '',
+      listTest: []
+    }
+  },
+  computed: {
+    listCon() {
+      return this.$store.state.dataShare.contractProcessList
+    }
+  },
+  watch: {
+    fullHeight(val) {
+      this.fullHeight = val
+    },
+    listCon(val) {
+      this.listTest = val
+      this.getDataList()
+    }
+  },
+  mounted() {
+    const that = this
+    window.onresize = () => {
+      return () => {
+        window.clientHeight = document.body.clientHeight
+        that.fullHeight = window.clientHeight
+      }
+    }
+  },
+  created() {
+    this.listTest = this.$store.state.dataShare.contractProcessList
+    this.getDataList()
+  },
+  methods: {
+    getDataList() {
+      var _this = this
+      this.listLoading = true
+      var tempData = []
+      for (const v of this.listTest) {
+        tempData.push(v.name)
+      }
+      getDataShareInfoBase(tempData.join(',')).then((res) => {
+        console.log(res)
+        for (const v of res.data.data) {
+          if (v.accessRight === '2') {
+            _this.dataList.push(v)
+          }
+        }
+        _this.total = _this.dataList.length
+        _this.listLoading = false
+      })
+    },
+    handleApply(row) {
+      window.executeContract(row.dataName, 'getStatus', '', (res) => {
+        // console.log(res)
+        if (res.result === '审核通过') {
+          this.$confirm('该数据您已申请通过,无法再次申请!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          })
+        } else if (res.result === '禁用') {
+          this.$confirm('该数据您已禁用,无法申请!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          })
+        } else if (res.result === '未审核') {
+          this.$confirm('该数据您已申请,请等待审核!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          })
+        } else {
+          getMyShareParam(row.id).then((res) => {
+            this.data = {
+              id: row.id,
+              basicInfo: {
+                name: row.dataName,
+                discription: row.dataDescription,
+                work: row.industryType,
+                typeId: row.typeId,
+                providerOffice: row.provideOrgan,
+                provider: row.dataProvider,
+                cyc: row.updatePeriod,
+                type: '类别'
+              },
+              shareControl: {
+                permiss: row.accessRight,
+                public: row.isPublic,
+                defaultPermiss: row.isPassed,
+                fileType: row.dataType,
+                shareType: row.shareType,
+                discription: row.shareDescription,
+              },
+              tableData: res.data.data.dataShareInfoFieldList,
+              isAllEdited: true,
+              isPartEdited: true
+            }
+            this.dialogDataList = true
+          })
+        }
+      })
+    },
+    handleFilter() { },
+    resetListQuery() { },
+    handleSizeChange(val) {
+      this.listQuery.rows = val
+    },
+    handleCurrentChange(val) {
+      this.listQuery.pages = val
+    },
+    apply() {
+      // var time = new Date()
+      // const args = {
+      //   contractID: 'iris',
+      //   data: {
+      //     userName: 'uTest',
+      //     data: time.getTime()
+      //   }
+      // }
+      var pubkey = this.$store.state.user.pubKey.split(',')[0]
+      const tempData = {
+        dataShareInfoBaseId: this.data.id,
+        useDescription: this.applyReason,
+        applicant: pubkey
+      }
+      window.executeContract(
+        this.data.basicInfo.name,
+        'apply',
+        this.applyReason,
+        function(ret) {
+          console.log(ret)
+        }
+      )
+      var _this = this
+      addApplication(tempData).then((res) => {
+        setTimeout(() => {
+          if (_this.data.shareControl.defaultPermiss === '1') {
+            this.$confirm('该数据默认授权,您已申请通过', '提示', {
+              confirmButtonText: '确定',
+              type: 'info'
+            })
+          } else {
+            this.$confirm('已申请,请等待审核', '提示', {
+              confirmButtonText: '确定',
+              type: 'info'
+            })
+          }
+          _this.applyReason = ''
+        }, 50)
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+.table {
+  width: 827px;
+  /* min-width: 850px; */
+}
+</style>

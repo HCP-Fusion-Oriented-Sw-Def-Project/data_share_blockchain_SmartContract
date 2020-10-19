@@ -1,0 +1,184 @@
+<template>
+  <div :class="className" :style="{height:height,width:width}"></div>
+</template>
+
+<script>
+import echarts from 'echarts'
+require('echarts/theme/macarons') // echarts theme
+import { debounce } from '@/utils'
+
+const animationDuration = 6000
+
+export default {
+  props: {
+    className: {
+      type: String,
+      default: 'chart'
+    },
+    width: {
+      type: String,
+      default: '800px'
+    },
+    height: {
+      type: String,
+      default: '800px'
+    },
+    parentHeight:{
+      type: Number,
+      default:0
+    },
+    parentWidth:{
+      type: Number,
+      default:0
+    },
+    dim: {
+      type: Array,
+      default: []
+    },
+    value: {
+      type: Array,
+      default: []
+    },
+    type: {
+      type:String,
+      default:'radar'
+    },
+    title: {
+      type:String,
+      default:''
+    },
+    toolbox:{
+      type:Boolean,
+      default:false
+    },
+      option: {
+          type: Object,
+          default: {}
+      }
+  },
+  created() {
+    this.myOption = this.option;
+  },
+  data() {
+    return {
+      chart: null,
+      myOption: {}
+    }
+  },
+  mounted() {
+    this.initChart()
+    this.__resizeHanlder = debounce(() => {
+      if (this.chart) {
+        this.chart.resize()
+      }
+    }, 100)
+    window.addEventListener('resize', this.__resizeHanlder)
+  },
+  beforeDestroy() {
+    if (!this.chart) {
+      return
+    }
+    window.removeEventListener('resize', this.__resizeHanlder)
+    this.chart.dispose()
+    this.chart = null
+  },
+  watch:{
+    'parentWidth':'initChart',
+    'parentHeight':'initChart',
+      option: {
+          handler(nval, oval) {
+              //this.myChart.clear();
+              //因为option由子组件传递过来的，所以初始化时，dim和value在option之前，需要在option第一次到达时将dim和value装载到option中
+              this.myOption = nval;
+              // console.log(nval);
+              if (this.myOption.series[0].data.length === 0){
+
+                 this.updateData();
+              }
+              this.chart.setOption(this.myOption, true);
+          },
+          deep: true
+      },
+      dim: {
+          handler(nval, oval) {
+              this.updateData();
+          },
+          deep: true
+      },
+      value: {
+          //为option.xAxis装载数据
+          handler(nval, oval) {
+              //为option.series，option.yAxis和option.legend装载数据
+              this.updateData();
+          },
+          deep: true
+      }
+  },
+  methods: {
+      updateData: function(){
+          this.xAxis=JSON.parse(JSON.stringify(this.dim));
+          this.yAxis=JSON.parse(JSON.stringify(this.value));
+
+          this.dataset = [];
+          for(let i=0; i<this.xAxis[0].list.length; i++){
+              this.dataset.push({value:this.yAxis[0].list[i], name:this.xAxis[0].list[i]});
+          }
+
+          this.myOption.legend.data = this.legend;
+          this.myOption.series[0].data = this.dataset;
+          this.$emit('change', this.myOption);
+      },
+      initChart() {
+      this.xAxis=JSON.parse(JSON.stringify(this.dim))
+      this.yAxis=JSON.parse(JSON.stringify(this.value))
+      // if(flag != "preInit")
+      //   this.dataNanding()
+      this.chart = echarts.init(this.$el, 'macarons')
+      this.chart.clear()
+      this.chart.setOption(this.myOption)
+      this.updateData();
+      // this.chart.setOption({
+      //     // title : {
+      //     //   text: '南丁图',
+      //     //   // subtext: '纯属虚构',
+      //     //   x:'center'
+      //     // },
+      //     tooltip : {
+      //       trigger: 'item',
+      //       formatter: "{a} <br/>{b} : {c} ({d}%)"
+      //     },
+      //     // legend: {
+      //     //   x : 'center',
+      //     //   y : 'bottom',
+      //     //   data:this.legend
+      //     // },
+      //     toolbox: {
+      //       show:this.toolbox,
+      //       feature: {
+      //         saveAsImage: {}
+      //       }
+      //     },
+      //     calculable : true,
+      //     series : [
+      //     {
+      //       name:this.title,
+      //       type:'pie',
+      //       radius : ['15%', '75%'],
+      //       center : ['50%', '50%'],
+      //       roseType : 'area',
+      //       data:this.dataset
+      //     }]
+      //   })
+      this.chart.resize()
+    },
+      resize() {
+          this.__resizeHanlder = debounce(() => {
+              if (this.chart) {
+                  this.chart.resize()
+              }
+          }, 100);
+          this.__resizeHanlder();
+      },
+  }
+}
+</script>
