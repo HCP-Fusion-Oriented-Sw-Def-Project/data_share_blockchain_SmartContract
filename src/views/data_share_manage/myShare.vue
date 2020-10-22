@@ -31,10 +31,20 @@
         </el-select>
       </div>
       <div style="float:left;margin-left:230px;">
-        <el-button v-waves type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-button
+          v-waves
+          type="primary"
+          icon="el-icon-search"
+          @click="handleFilter"
+        >
           查找
         </el-button>
-        <el-button v-waves type="info" icon="el-icon-refresh" @click="resetListQuery">
+        <el-button
+          v-waves
+          type="info"
+          icon="el-icon-refresh"
+          @click="resetListQuery"
+        >
           重置
         </el-button>
       </div>
@@ -53,7 +63,11 @@
         >
           添加
         </el-button>
-        <el-button size="small" type="info" @click="deleteInBatches()">
+        <el-button
+          size="small"
+          type="info"
+          @click="deleteInBatches()"
+        >
           <svg-icon icon-class="delete" />批量删除
         </el-button>
       </div>
@@ -78,54 +92,104 @@
         style="height:600px;"
         @selection-change="handleBatchDelete"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="center" label width="65" type="index" />
-        <el-table-column align="center" label="名称" width="150px">
+        <el-table-column
+          type="selection"
+          width="55"
+        />
+        <el-table-column
+          align="center"
+          label
+          width="65"
+          type="index"
+        />
+        <el-table-column
+          align="center"
+          label="名称"
+          width="150px"
+        >
           <template slot-scope="scope">
-            <span class="link-type" @click="handleUpdate(scope.row)">
+            <span
+              class="link-type"
+              @click="handleUpdate(scope.row)"
+            >
               {{
                 scope.row.name
               }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="所属类别" width="150px">
+        <el-table-column
+          align="center"
+          label="所属类别"
+          width="150px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.type }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="创建时间">
+        <el-table-column
+          align="center"
+          label="创建时间"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.createDate | formatTimes }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="访问权限" width="200">
+        <el-table-column
+          align="center"
+          label="访问权限"
+          width="200"
+        >
           <template slot-scope="scope">
             <span v-if="scope.row.permiss == '1'">禁止访问</span>
             <span v-if="scope.row.permiss == '2'">申请后访问</span>
             <span v-if="scope.row.permiss == '3'">可申请访问但禁止查看详情</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" class-name="status-col" label="审核状态" width="200">
+        <el-table-column
+          align="center"
+          class-name="status-col"
+          label="审核状态"
+          width="200"
+        >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.useAble == 0" :type="scope.row.useAble | statusFilter">
+            <el-tag
+              v-if="scope.row.useAble == 0"
+              :type="scope.row.useAble | statusFilter"
+            >
               未提交
             </el-tag>
-            <el-tag v-if="scope.row.useAble == 1" :type="scope.row.useAble | statusFilter">
+            <el-tag
+              v-if="scope.row.useAble == 1"
+              :type="scope.row.useAble | statusFilter"
+            >
               未审核
             </el-tag>
-            <el-tag v-if="scope.row.useAble == 2" :type="scope.row.useAble | statusFilter">
+            <el-tag
+              v-if="scope.row.useAble == 2"
+              :type="scope.row.useAble | statusFilter"
+            >
               审核不通过
             </el-tag>
-            <el-tag v-if="scope.row.useAble == 3" :type="scope.row.useAble | statusFilter">
+            <el-tag
+              v-if="scope.row.useAble == 3"
+              :type="scope.row.useAble | statusFilter"
+            >
               审核通过
             </el-tag>
-            <el-tag v-if="scope.row.useAble == 4" :type="scope.row.useAble | statusFilter">
+            <el-tag
+              v-if="scope.row.useAble == 4"
+              :type="scope.row.useAble | statusFilter"
+            >
               禁用
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
+        <el-table-column
+          align="center"
+          label="操作"
+          class-name="small-padding fixed-width"
+        >
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.permiss == 1"
@@ -155,7 +219,11 @@
             >
               编辑
             </el-button>
-            <el-popover placement="top" width="160" trigger="click">
+            <el-popover
+              placement="top"
+              width="160"
+              trigger="click"
+            >
               <p>确定删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button
@@ -211,14 +279,23 @@
       top="7vh"
     >
       <div v-if="dialogDataShare">
-        <edit-share ref="shareData" :data="data" />
+        <edit-share
+          ref="shareData"
+          :data="data"
+        />
       </div>
       <!-- <edit-share v-else :obj ref="shareData"></edit-share> -->
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogDataShare = false">
           取消
         </el-button>
-        <el-button type="primary" @click="handleAdd1()">
+        <el-button
+          type="primary"
+          @click="handleAdd1()"
+        >
           确认
         </el-button>
       </div>
@@ -440,6 +517,11 @@ export default {
     },
     // 重置
     resetListQuery() {
+      this.postData().then((res) => {
+        console.log(res)
+      }).catch((error) => {
+        console.log(error)
+      })
       this.listQuery = {
         name: '',
         type: '',
@@ -543,6 +625,41 @@ export default {
     // async test() {
     //   await startContract()
     // },
+    // fetch方法发送请求
+    postData() {
+      return fetch('https://trybaas.internetapi.cn/api/auth/login', {
+        headers: {
+          'accept': 'application/json, text/plain, */*',
+          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+          'content-type': 'application/json;charset=UTF-8',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          // 'sec-fetch-site': 'same-origin'
+        },
+        credentials: 'same-origin',
+        referrer: 'https://trybaas.internetapi.cn/',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: JSON.stringify({ email: 'demo@bdware.org', password: 'test@123' }),
+        method: 'POST',
+        mode: 'cors'
+      }).then(response => response.json())
+    },
+    // 使用fetch创建合约
+    createShareData(data) {
+      fetch('https://trybaas.internetapi.cn/api/apps', {
+        headers: {
+          'accept': 'application/json, text/plain, */*',
+          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+          'authorization': '<token>',
+        },
+        referrer: 'https://trybaas.internetapi.cn/',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        // '{"appInfo":{"name":"4477563","type":"教育","version":"1.2.3","chainID":"74666afc-3e6d-4191-910a-c4b478338fb8","coverUrl":"","intro":"234"},"contractInfo":{"upload":false,"cTemplate":"MySQL","cApiName":"generateMySQLProject"},"contractCfg":{"dbPWD":"32131","defaultAccept":"true","contractName":"tsql","accessPolicy":"DAC","dbUserName":"1231","dbUrl":"432","tableName":"1123","basicInfo":"3123"}}',
+        body: JSON.stringify(data),
+        method: 'POST',
+        mode: 'cors'
+      })
+    },
     handleAdd1() {
       this.$refs.shareData.transferToPar()
     },
