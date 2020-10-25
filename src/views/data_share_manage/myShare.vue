@@ -517,18 +517,12 @@ export default {
     },
     // 重置
     resetListQuery() {
-      this.postData().then((res) => {
-        console.log(res)
-      }).catch((error) => {
-        console.log(error)
-      })
       this.listQuery = {
         name: '',
         type: '',
         status: '',
       }
       this.shareList = this.shareAllList
-      console.log(this.listQuery)
     },
     // 是否禁用
     handleModify(row, permiss) {
@@ -634,23 +628,22 @@ export default {
           'content-type': 'application/json;charset=UTF-8',
           'sec-fetch-dest': 'empty',
           'sec-fetch-mode': 'cors',
-          // 'sec-fetch-site': 'same-origin'
+          'sec-fetch-site': 'same-origin'
         },
-        credentials: 'same-origin',
         referrer: 'https://trybaas.internetapi.cn/',
         referrerPolicy: 'strict-origin-when-cross-origin',
         body: JSON.stringify({ email: 'demo@bdware.org', password: 'test@123' }),
         method: 'POST',
         mode: 'cors'
-      }).then(response => response.json())
+      }).then(response => response.headers.get('authorization'))
     },
     // 使用fetch创建合约
-    createShareData(data) {
+    createShareData(data, token) {
       fetch('https://trybaas.internetapi.cn/api/apps', {
         headers: {
           'accept': 'application/json, text/plain, */*',
           'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
-          'authorization': '<token>',
+          'authorization': token,
         },
         referrer: 'https://trybaas.internetapi.cn/',
         referrerPolicy: 'strict-origin-when-cross-origin',
@@ -693,18 +686,29 @@ export default {
               dataShareInfoFieldList: obj.formTable.tableData
             }
             addDataShareInfoBase(tempData).then((res) => {
-              this.$notify({
-                title: '成功',
-                message: res.message,
-                type: 'success',
-                duration: 2000
-              })
-              this.getShareList()
+              if (res.data.code === 20000) {
+                this.$notify({
+                  title: '成功',
+                  message: res.message,
+                  type: 'success',
+                  duration: 2000
+                })
+                this.getShareList()
+              } else {
+                this.$notify({
+                  title: '失败',
+                  message: res.message,
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
+            }).catch((error) => {
+              console.log(error)
             })
-            const args = {
+            const contractCfg = {
               contractName: obj.basicInfo.name,
-              type: '1',
-              isPrivate: true,
+              basicInfo: '生成mysql合约',
+              // isPrivate: true,
               tableName: obj.shareControl.dataTable,
               dbUrl: 'jdbc:mysql://' + obj.shareControl.dataLink,
               dbUserName: obj.shareControl.dataName,
@@ -712,14 +716,36 @@ export default {
               defaultAccept: obj.shareControl.defaultPermiss,
               accessPolicy: 'DAC'
             }
-            const fieldList = []
-            var temp1 = {
-              name: 'name',
-              code: '*'
+            const appInfo = {
+              chainID: '74666afc-3e6d-4191-910a-c4b478338fb8',
+              coverUrl: '',
+              intro: '',
+              name: '',
+              type: '',
+              version: ''
             }
-            fieldList.push(temp1)
-            window.generateMySQLProject(args, fieldList)
-            window.startContract(args.contractName)
+            const contractInfo = {
+              cApiName: 'generateMySQLProject',
+              cTemplate: 'MySQL',
+              upload: false
+            }
+            // var temp1 = {
+            //   name: 'name',
+            //   code: '*'
+            // }
+            this.postData().then((res) => {
+              var data = {
+                appInfo: appInfo,
+                contractCfg: contractCfg,
+                contractInfo: contractInfo
+              }
+              this.createShareData(data, res)
+            }).catch((error) => {
+              console.log(error)
+            })
+            // fieldList.push(temp1)
+            // window.generateMySQLProject(args, fieldList)
+            // window.startContract(args.contractName)
           } else {
             const tempData = {
               dataShareInfoBase: {
