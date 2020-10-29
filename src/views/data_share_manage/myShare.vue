@@ -30,24 +30,6 @@
           />
         </el-select>
       </div>
-      <div style="float:left;margin-left:230px;">
-        <el-button
-          v-waves
-          type="primary"
-          icon="el-icon-search"
-          @click="handleFilter"
-        >
-          查找
-        </el-button>
-        <el-button
-          v-waves
-          type="info"
-          icon="el-icon-refresh"
-          @click="resetListQuery"
-        >
-          重置
-        </el-button>
-      </div>
     </div>
 
     <div style="margin-top: 0px">
@@ -61,20 +43,40 @@
             handleCreate()
           "
         >
-          添加
+          添加共享数据
         </el-button>
         <el-button
           size="small"
-          type="info"
+          type="danger"
           @click="deleteInBatches()"
         >
           <svg-icon icon-class="delete" />批量删除
         </el-button>
       </div>
+      <div style="float:right;">
+        <el-button
+          v-waves
+          size="small"
+          type="primary"
+          icon="el-icon-search"
+          @click="handleFilter"
+        >
+          查找
+        </el-button>
+        <el-button
+          v-waves
+          size="small"
+          type="info"
+          icon="el-icon-refresh"
+          @click="resetListQuery"
+        >
+          重置
+        </el-button>
+      </div>
     </div>
-    <div style="margin-top:80px;margin-bottom:10px; height:215x;clear:both;">
+    <!-- <div style="margin-top:80px;margin-bottom:10px; height:215x;clear:both;">
       <span style="font-size:15px; font-weight:bold;">我的共享记录:</span>
-    </div>
+    </div> -->
     <div>
       <el-table
         :key="tableKey"
@@ -89,7 +91,7 @@
         border
         fit
         highlight-current-row
-        style="height:600px;"
+        style="height:600px;margin-top:20px;"
         @selection-change="handleBatchDelete"
       >
         <el-table-column
@@ -444,21 +446,32 @@ export default {
       this.shareList = []
       getMyShare().then((res) => {
         console.log(res.data.data)
-        this.list = res.data.data
-        for (const v of this.list) {
-          var temp = {
-            id: v.id,
-            name: v.dataName,
-            type: v.typeId,
-            useAble: v.auditState,
-            permiss: v.accessRight,
-            createDate: v.createDate
+        if (res.data.code === 20000) {
+          this.list = res.data.data
+          for (const v of this.list) {
+            var temp = {
+              id: v.id,
+              name: v.dataName,
+              type: v.typeId,
+              useAble: v.auditState,
+              permiss: v.accessRight,
+              createDate: v.createDate
+            }
+            this.shareList.push(temp)
           }
-          this.shareList.push(temp)
+          this.listLoading = false
+          this.shareAllList = this.shareList
+          this.total = this.shareList.length
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
         }
-        this.listLoading = false
-        this.shareAllList = this.shareList
-        this.total = this.shareList.length
+      }).catch((error) => {
+        console.log(error)
       })
     },
     indexMethod(index) { },
@@ -505,6 +518,9 @@ export default {
       }
       deleteDataShareByIds(this.sels.join(',')).then((res) => {
         console.log(res)
+        this.getShareList()
+      }).catch((error) => {
+        console.log(error)
       })
     },
     handleBatchDelete(sels) {
@@ -517,6 +533,11 @@ export default {
     },
     // 重置
     resetListQuery() {
+      // var coverUrl = 'assets/dashboard/dashboard.png'
+      // this.convertImgToBase64(coverUrl, function(base64Img) {
+      //   // 转化后的base64
+      //   console.log(base64Img)
+      // })
       this.listQuery = {
         name: '',
         type: '',
@@ -524,6 +545,22 @@ export default {
       }
       this.shareList = this.shareAllList
     },
+    // 将图片转换成base634格式
+    // convertImgToBase64(url, callback, outputFormat) {
+    //   var canvas = document.createElement('CANVAS')
+    //   var ctx = canvas.getContext('2d')
+    //   var img = new Image()
+    //   img.crossOrigin = 'Anonymous'
+    //   img.onload = function() {
+    //     canvas.height = img.height
+    //     canvas.width = img.width
+    //     ctx.drawImage(img, 0, 0)
+    //     var dataURL = canvas.toDataURL(outputFormat || 'image/png')
+    //     callback.call(this, dataURL)
+    //     canvas = null
+    //   }
+    //   img.src = url
+    // },
     // 是否禁用
     handleModify(row, permiss) {
       let temp = {}
@@ -536,7 +573,18 @@ export default {
       temp.accessRight = permiss
       editDataShareStatus(temp).then((res) => {
         console.log(res)
-        this.getShareList()
+        if (res.data.code === 20000) {
+          this.getShareList()
+        } else {
+          this.$notify({
+            title: '编辑失败',
+            message: res.data.message,
+            type: 'danger',
+            duration: 2000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 编辑
@@ -545,40 +593,57 @@ export default {
       var _this = this
       getMyShareParam(row.id).then((res) => {
         console.log(res)
-        let tempData = {}
-        for (const v of _this.list) {
-          if (v.id === row.id) {
-            tempData = v
-            break
+        if (res.data.code === 20000) {
+          this.$notify({
+            title: '修改成功',
+            message: res.data.message,
+            type: 'success',
+            duration: 2000
+          })
+          let tempData = {}
+          for (const v of _this.list) {
+            if (v.id === row.id) {
+              tempData = v
+              break
+            }
           }
+          console.log(tempData)
+          // this.data = row;
+          _this.data = {
+            basicInfo: {
+              name: tempData.dataName,
+              discription: tempData.dataDescription,
+              work: tempData.industryType,
+              typeId: tempData.typeId,
+              providerOffice: tempData.provideOrgan,
+              provider: tempData.dataProvider,
+              cyc: tempData.updatePeriod,
+              type: '类别'
+            },
+            shareControl: {
+              permiss: tempData.accessRight,
+              public: tempData.isPublic,
+              defaultPermiss: tempData.isPassed,
+              fileType: tempData.dataType,
+              shareType: tempData.shareType,
+              discription: tempData.shareDescription,
+              dataTable: tempData.dataTable
+            },
+            tableData: res.data.data.dataShareInfoFieldList,
+            isAllEdited: false,
+            isPartEdited: true
+          }
+          _this.dialogDataShare = true
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'danger',
+            duration: 2000
+          })
         }
-        console.log(tempData)
-        // this.data = row;
-        _this.data = {
-          basicInfo: {
-            name: tempData.dataName,
-            discription: tempData.dataDescription,
-            work: tempData.industryType,
-            typeId: tempData.typeId,
-            providerOffice: tempData.provideOrgan,
-            provider: tempData.dataProvider,
-            cyc: tempData.updatePeriod,
-            type: '类别'
-          },
-          shareControl: {
-            permiss: tempData.accessRight,
-            public: tempData.isPublic,
-            defaultPermiss: tempData.isPassed,
-            fileType: tempData.dataType,
-            shareType: tempData.shareType,
-            discription: tempData.shareDescription,
-            dataTable: tempData.dataTable
-          },
-          tableData: res.data.data.dataShareInfoFieldList,
-          isAllEdited: false,
-          isPartEdited: true
-        }
-        _this.dialogDataShare = true
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 删除
@@ -588,14 +653,23 @@ export default {
       var _this = this
       deleteMyShare(row.id).then((res) => {
         console.log(res)
-        const index = _this.shareList.indexOf(row)
-        _this.shareList.splice(index, 1)
-        this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
-          duration: 2000
-        })
+        if (res.data.code) {
+          const index = _this.shareList.indexOf(row)
+          _this.shareList.splice(index, 1)
+          this.$notify({
+            title: '删除成功',
+            message: res.data.message,
+            type: 'success',
+            duration: 2000
+          })
+        } else {
+          this.$notify({
+            title: '删除失败',
+            message: res.data.message,
+            type: 'danger',
+            duration: 2000
+          })
+        }
       })
     },
     // 是否删除
@@ -641,16 +715,16 @@ export default {
     createShareData(data, token) {
       fetch('https://trybaas.internetapi.cn/api/apps', {
         headers: {
-          'accept': 'application/json, text/plain, */*',
-          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
-          'authorization': token,
+          'Content-Type': 'application/json',
+          // 'accept': 'application/json, text/plain, */*',
+          // 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+          'authorization': 'Bearer ' + token,
         },
-        referrer: 'https://trybaas.internetapi.cn/',
+        // referrer: 'https://trybaas.internetapi.cn/',
         referrerPolicy: 'strict-origin-when-cross-origin',
-        // '{"appInfo":{"name":"4477563","type":"教育","version":"1.2.3","chainID":"74666afc-3e6d-4191-910a-c4b478338fb8","coverUrl":"","intro":"234"},"contractInfo":{"upload":false,"cTemplate":"MySQL","cApiName":"generateMySQLProject"},"contractCfg":{"dbPWD":"32131","defaultAccept":"true","contractName":"tsql","accessPolicy":"DAC","dbUserName":"1231","dbUrl":"432","tableName":"1123","basicInfo":"3123"}}',
         body: JSON.stringify(data),
         method: 'POST',
-        mode: 'cors'
+        // mode: 'cors'
       })
     },
     handleAdd1() {
@@ -705,34 +779,39 @@ export default {
             }).catch((error) => {
               console.log(error)
             })
+            var temp1 = {
+              name: 'name',
+              code: '*'
+            }
+            var fieldList = []
+            fieldList.push(temp1)
             const contractCfg = {
               contractName: obj.basicInfo.name,
-              basicInfo: '生成mysql合约',
-              // isPrivate: true,
+              basicInfo: '',
+              isPrivate: true,
               tableName: obj.shareControl.dataTable,
               dbUrl: 'jdbc:mysql://' + obj.shareControl.dataLink,
               dbUserName: obj.shareControl.dataName,
               dbPWD: obj.shareControl.dataPassword,
-              defaultAccept: obj.shareControl.defaultPermiss,
-              accessPolicy: 'DAC'
+              defaultAccept: obj.shareControl.defaultPermiss === '1',
+              accessPolicy: 'DAC',
+              chainName: 'demo'
+              // fieldList: fieldList
             }
             const appInfo = {
-              chainID: '74666afc-3e6d-4191-910a-c4b478338fb8',
-              coverUrl: '',
-              intro: '',
-              name: '',
-              type: '',
-              version: ''
+              chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+              coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
+              intro: '1',
+              name: obj.basicInfo.name,
+              type: '医疗健康',
+              version: '1.2.3'
             }
             const contractInfo = {
               cApiName: 'generateMySQLProject',
               cTemplate: 'MySQL',
               upload: false
             }
-            // var temp1 = {
-            //   name: 'name',
-            //   code: '*'
-            // }
+
             this.postData().then((res) => {
               var data = {
                 appInfo: appInfo,
@@ -743,7 +822,6 @@ export default {
             }).catch((error) => {
               console.log(error)
             })
-            // fieldList.push(temp1)
             // window.generateMySQLProject(args, fieldList)
             // window.startContract(args.contractName)
           } else {
@@ -761,11 +839,7 @@ export default {
                 isPassed: obj.shareControl.defaultPermiss,
                 dataType: obj.shareControl.fileType,
                 shareType: obj.shareControl.shareType,
-                // dataTable: obj.shareControl.dataTable,
                 shareDescription: obj.shareControl.discription,
-                // dataSourceUrl: obj.shareControl.dataLink,
-                // username: obj.shareControl.dataName,
-                // password: obj.shareControl.dataPassword
               },
               dataShareInfoFieldList: obj.formTable.tableData
             }
@@ -778,22 +852,53 @@ export default {
               })
               this.getShareList()
             })
-            const args = {
+            // const args = {
+            //   contractName: obj.basicInfo.name,
+            //   type: obj.basicInfo.type,
+            //   isPrivate: true,
+            //   defaultAccept: obj.shareControl.defaultPermiss,
+            //   base64EncodedData: obj.shareControl.base64EncodedData,
+            //   accessPolicy: 'DAC'
+            // }
+            // const fieldList = []
+            // var temp2 = {
+            //   name: 'name',
+            //   code: '*'
+            // }
+            // fieldList.push(temp2)
+            // window.generateCSVProject(args, fieldList)
+            // window.startContract(args.contractName)
+            const contractCfg = {
               contractName: obj.basicInfo.name,
-              type: obj.basicInfo.type,
-              isPrivate: true,
-              defaultAccept: obj.shareControl.defaultPermiss,
+              basicInfo: '生成csv数据合约',
+              // isPrivate: true,
               base64EncodedData: obj.shareControl.base64EncodedData,
+              defaultAccept: obj.shareControl.defaultPermiss === '1',
               accessPolicy: 'DAC'
             }
-            const fieldList = []
-            var temp2 = {
-              name: 'name',
-              code: '*'
+            const appInfo = {
+              chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+              coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
+              intro: '21',
+              name: obj.basicInfo.name,
+              type: '1',
+              version: '1.0.0'
             }
-            fieldList.push(temp2)
-            window.generateCSVProject(args, fieldList)
-            window.startContract(args.contractName)
+            const contractInfo = {
+              cApiName: 'generateCSVProject',
+              cTemplate: 'CSV',
+              upload: false
+            }
+            this.postData().then((res) => {
+              var data = {
+                appInfo: appInfo,
+                contractCfg: contractCfg,
+                contractInfo: contractInfo
+              }
+              this.createShareData(data, res)
+            }).catch((error) => {
+              console.log(error)
+            })
           }
         } else {
           this.dialogDataShare = true

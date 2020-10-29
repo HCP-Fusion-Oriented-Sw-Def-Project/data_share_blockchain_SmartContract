@@ -20,8 +20,9 @@ import './utils/error-log' // error log
 
 import './directive/el-drag-dialog/directives'
 
-// import '@/unils/wsCluster'
-// import '@/assets/js/createWS'
+// 引入jquery
+// window.jquery = window.$ = jquery
+// Vue.prototype.$ = jquery
 
 import * as filters from './filters' // global filters
 // cluster component
