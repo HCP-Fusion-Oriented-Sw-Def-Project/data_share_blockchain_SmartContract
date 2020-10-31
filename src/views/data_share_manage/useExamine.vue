@@ -23,7 +23,12 @@
     </div>
     <!-- 中部，添加、批量删除等操作-->
     <div class="edit-container">
-      <el-button size="small" type="info" icon="el-icon-refresh-right" @click="handleFilter">
+      <el-button
+        size="small"
+        type="info"
+        icon="el-icon-refresh-right"
+        @click="handleFilter"
+      >
         刷新
       </el-button>
       <div class="filter-button">
@@ -59,34 +64,61 @@
       highlight-current-row
       :height="fullHeight - 300"
     >
-      <el-table-column align="center" label width="65" type="index" />
-      <el-table-column align="center" width="120px" label="申请人">
+      <el-table-column
+        align="center"
+        label
+        width="65"
+        type="index"
+      />
+      <el-table-column
+        align="center"
+        width="120px"
+        label="申请人"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.applicant }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="申请理由">
+      <el-table-column
+        width="180px"
+        align="center"
+        label="申请理由"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.instructions }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="数据名称">
+      <el-table-column
+        align="center"
+        label="数据名称"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="所属类别">
+      <el-table-column
+        align="center"
+        label="所属类别"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.category }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="数据描述">
+      <el-table-column
+        align="center"
+        label="数据描述"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="230" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="230"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             type="success"
@@ -164,6 +196,7 @@ export default {
     }
   },
   created() {
+    // init()
     this.getList()
   },
   mounted() {
@@ -247,7 +280,7 @@ export default {
       }
       getJudgeAccess(tempData).then((res) => {
         console.log(res)
-        window.executeContract(row.name, 'ignore', row.pubkey, (res) => {
+        window.executeContract(row.name, 'cancel', row.pubkey, (res) => {
           console.log(res)
           this.verifyList.splice(index, 1)
           // this.getAppliedList()

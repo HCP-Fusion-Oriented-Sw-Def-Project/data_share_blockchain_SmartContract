@@ -53,7 +53,7 @@
         fit
         highlight-current-row
         style="width: 100%"
-        :height="fullHeight-400"
+        :height="fullHeight-300"
       >
         <el-table-column
           type="selection"
@@ -188,7 +188,7 @@
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
 import $ from 'jquery'
-import '@/utils/wsCluster.js'
+import { init } from '@/utils/wsCluster'
 import { getDataShareInfoBase, getMyShareParam, addApplication } from '@/api/dataShare'
 export default {
   directives: {
@@ -215,22 +215,22 @@ export default {
       // 申请理由
       dialogReason: false,
       applyReason: '',
-      listTest: []
+      // listTest: []
     }
   },
   computed: {
-    listCon() {
-      return this.$store.state.dataShare.contractProcessList
-    }
+    // listCon() {
+    //   return this.$store.state.dataShare.contractProcessList
+    // }
   },
   watch: {
     fullHeight(val) {
       this.fullHeight = val
     },
-    listCon(val) {
-      this.listTest = val
-      this.getDataList()
-    }
+    // listCon(val) {
+    //   this.listTest = val
+    //   this.getDataList()
+    // }
   },
   mounted() {
     const that = this
@@ -242,7 +242,8 @@ export default {
     }
   },
   created() {
-    this.listTest = this.$store.state.dataShare.contractProcessList
+    // this.listTest = this.$store.state.dataShare.contractProcessList
+    init()
     this.getDataList()
   },
   methods: {
@@ -284,7 +285,6 @@ export default {
             },
           }
           $.ajax(setting).done(function(response) {
-            console.log(response)
             if (response.code === 20000) {
               resolve(response)
             } else {
@@ -380,29 +380,38 @@ export default {
           })
         } else {
           getMyShareParam(row.id).then((res) => {
-            this.data = {
-              id: row.id,
-              basicInfo: {
-                name: row.dataName,
-                discription: row.dataDescription,
-                work: row.industryType,
-                typeId: row.typeId,
-                providerOffice: row.provideOrgan,
-                provider: row.dataProvider,
-                cyc: row.updatePeriod,
-                type: '类别'
-              },
-              shareControl: {
-                permiss: row.accessRight,
-                public: row.isPublic,
-                defaultPermiss: row.isPassed,
-                fileType: row.dataType,
-                shareType: row.shareType,
-                discription: row.shareDescription,
-              },
-              tableData: res.data.data.dataShareInfoFieldList,
-              isAllEdited: true,
-              isPartEdited: true
+            if (res.data.code === 20000) {
+              this.data = {
+                id: row.id,
+                basicInfo: {
+                  name: row.dataName,
+                  discription: row.dataDescription,
+                  work: row.industryType,
+                  typeId: row.typeId,
+                  providerOffice: row.provideOrgan,
+                  provider: row.dataProvider,
+                  cyc: row.updatePeriod,
+                  type: '类别'
+                },
+                shareControl: {
+                  permiss: row.accessRight,
+                  public: row.isPublic,
+                  defaultPermiss: row.isPassed,
+                  fileType: row.dataType,
+                  shareType: row.shareType,
+                  discription: row.shareDescription,
+                },
+                tableData: res.data.data.dataShareInfoFieldList,
+                isAllEdited: true,
+                isPartEdited: true
+              }
+            } else {
+              this.$notify({
+                title: '失败',
+                message: res.data.message,
+                type: 'error',
+                duration: 2000
+              })
             }
             this.dialogDataList = true
           }).catch((error) => {
@@ -458,6 +467,8 @@ export default {
           }
           _this.applyReason = ''
         }, 50)
+      }).catch((error) => {
+        console.log(error)
       })
     }
   }

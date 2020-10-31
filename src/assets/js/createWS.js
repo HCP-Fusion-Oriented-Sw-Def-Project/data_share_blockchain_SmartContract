@@ -280,9 +280,10 @@ window.startContract = function(contractName) {
   request.isPrivate = true
   request.requestID = new Date().getTime() + "_" +
     Math.floor(Math.random() * 10000);
-  var res = store.getters.pubKey.split(",")
+  var res = store.getters.contractKey.split(",")
   request.owner = res[0];
   request.script = "empty";
+  // request.path = "/" + contractName + '_' + contractName + + "/manifest.json";
   request.path = "/" + contractName + "/manifest.json";
   request.signature = sm2.doSignature("Fixed|" + request.path + "|" + res[0], res[1]);
   global.wssocket.send(JSON.stringify(request));

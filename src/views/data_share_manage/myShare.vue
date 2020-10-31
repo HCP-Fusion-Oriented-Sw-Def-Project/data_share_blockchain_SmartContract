@@ -32,8 +32,8 @@
       </div>
     </div>
 
-    <div style="margin-top: 0px">
-      <div style="float:left;clear:both;">
+    <div style="clear:both;">
+      <div style="float:left;">
         <el-button
           size="small"
           type="primary"
@@ -74,10 +74,10 @@
         </el-button>
       </div>
     </div>
-    <!-- <div style="margin-top:80px;margin-bottom:10px; height:215x;clear:both;">
+    <!-- <div style="margin-top:20px;margin-bottom:10px; height:215x;">
       <span style="font-size:15px; font-weight:bold;">我的共享记录:</span>
     </div> -->
-    <div>
+    <div style="margin-top:45px;">
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -91,7 +91,7 @@
         border
         fit
         highlight-current-row
-        style="height:600px;margin-top:20px;"
+        :height="fullHeight-300"
         @selection-change="handleBatchDelete"
       >
         <el-table-column
@@ -106,7 +106,7 @@
         />
         <el-table-column
           align="center"
-          label="名称"
+          label="数据名称"
           width="150px"
         >
           <template slot-scope="scope">
@@ -306,7 +306,7 @@
 </template>
 
 <script>
-import '@/utils/wsCluster.js'
+import { initWSocket } from '@/utils/wsCluster'
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
 import {
@@ -517,8 +517,16 @@ export default {
         window.killContractProcess(v)
       }
       deleteDataShareByIds(this.sels.join(',')).then((res) => {
-        console.log(res)
-        this.getShareList()
+        if (res.data.code === 20000) {
+          this.getShareList()
+        } else {
+          this.$notify({
+            title: '删除失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
       }).catch((error) => {
         console.log(error)
       })
@@ -538,6 +546,7 @@ export default {
       //   // 转化后的base64
       //   console.log(base64Img)
       // })
+      window.startContract('testyur')
       this.listQuery = {
         name: '',
         type: '',
@@ -579,7 +588,7 @@ export default {
           this.$notify({
             title: '编辑失败',
             message: res.data.message,
-            type: 'danger',
+            type: 'error',
             duration: 2000
           })
         }
@@ -649,11 +658,10 @@ export default {
     // 删除
     handleDelete(row) {
       window.deleteFile(row.name)
-      window.killContractProcess(row.name)
+      window.killContractProcess(row.name, row.contractKey)
       var _this = this
       deleteMyShare(row.id).then((res) => {
-        console.log(res)
-        if (res.data.code) {
+        if (res.data.code === 20000) {
           const index = _this.shareList.indexOf(row)
           _this.shareList.splice(index, 1)
           this.$notify({
@@ -670,6 +678,8 @@ export default {
             duration: 2000
           })
         }
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 是否删除
@@ -713,7 +723,7 @@ export default {
     },
     // 使用fetch创建合约
     createShareData(data, token) {
-      fetch('https://trybaas.internetapi.cn/api/apps', {
+      return fetch('https://trybaas.internetapi.cn/api/apps', {
         headers: {
           'Content-Type': 'application/json',
           // 'accept': 'application/json, text/plain, */*',
@@ -725,7 +735,7 @@ export default {
         body: JSON.stringify(data),
         method: 'POST',
         // mode: 'cors'
-      })
+      }).then(response => response.json())
     },
     handleAdd1() {
       this.$refs.shareData.transferToPar()
@@ -759,69 +769,146 @@ export default {
               },
               dataShareInfoFieldList: obj.formTable.tableData
             }
-            addDataShareInfoBase(tempData).then((res) => {
-              if (res.data.code === 20000) {
-                this.$notify({
-                  title: '成功',
-                  message: res.message,
-                  type: 'success',
-                  duration: 2000
+            var _this = this
+            // 登录baas获取token
+            new Promise((resolve, reject) => {
+              _this.postData().then((res) => {
+                console.log(res)
+                resolve(res)
+              }).catch((error) => {
+                console.log(error)
+                reject()
+              })
+            }).then(function(token) {
+              // 生成合约
+              return new Promise((resolve, reject) => {
+                const contractCfg = {
+                  contractName: obj.basicInfo.name,
+                  basicInfo: '',
+                  isPrivate: true,
+                  tableName: obj.shareControl.dataTable,
+                  dbUrl: 'jdbc:mysql://' + obj.shareControl.dataLink,
+                  dbUserName: obj.shareControl.dataName,
+                  dbPWD: obj.shareControl.dataPassword,
+                  defaultAccept: obj.shareControl.defaultPermiss === '1',
+                  accessPolicy: 'DAC',
+                  chainName: 'demo'
+                }
+                const appInfo = {
+                  chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+                  coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
+                  intro: '1',
+                  name: obj.basicInfo.name,
+                  type: '医疗健康',
+                  version: '1.2.3'
+                }
+                const contractInfo = {
+                  cApiName: 'generateMySQLProject',
+                  cTemplate: 'MySQL',
+                  upload: false
+                }
+                var data = {
+                  appInfo: appInfo,
+                  contractCfg: contractCfg,
+                  contractInfo: contractInfo
+                }
+                _this.createShareData(data, token).then((res1) => {
+                  // 获得返回值当前合约节点ip, 当前合约公私玥
+                  _this.$store.commit('setNodeAddr', res1.data.nodeAddr)
+                  _this.$store.commit('setContractKey', res1.data.keyPair.publicKey + ',' + res1.data.keyPair.privateKey)
+                  resolve()
+                }).catch((error) => {
+                  console.log(error)
+                  reject()
                 })
-                this.getShareList()
-              } else {
-                this.$notify({
-                  title: '失败',
-                  message: res.message,
-                  type: 'warning',
-                  duration: 2000
+              })
+            }).then(function() {
+              // 建立websocket连接, 登录节点启动合约
+              return new Promise((resolve, reject) => {
+                initWSocket()
+                resolve()
+              })
+            }).then(function() {
+              // 传给自己后端存储
+              return new Promise((resolve, reject) => {
+                tempData.dataShareInfoBase.contractKey = _this.$store.state.dataShare.contractKey
+                addDataShareInfoBase(tempData).then((res) => {
+                  if (res.data.code === 20000) {
+                    _this.$notify({
+                      title: '成功',
+                      message: res.data.message,
+                      type: 'success',
+                      duration: 2000
+                    })
+                    _this.getShareList()
+                    resolve()
+                  } else {
+                    _this.$notify({
+                      title: '失败',
+                      message: res.data.message,
+                      type: 'warning',
+                      duration: 2000
+                    })
+                    reject()
+                  }
+                }).catch((error) => {
+                  console.log(error)
                 })
-              }
+              })
+            }).then(function() {
+              // 启动合约
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  window.startContract(obj.basicInfo.name)
+                  _this.$store.commit('setContractKey', '')
+                  resolve()
+                }, 8000)
+              })
+            }).then(function() {
+              return new Promise((resolve, reject) => {
+                window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                resolve()
+              })
             }).catch((error) => {
               console.log(error)
             })
-            var temp1 = {
-              name: 'name',
-              code: '*'
-            }
-            var fieldList = []
-            fieldList.push(temp1)
-            const contractCfg = {
-              contractName: obj.basicInfo.name,
-              basicInfo: '',
-              isPrivate: true,
-              tableName: obj.shareControl.dataTable,
-              dbUrl: 'jdbc:mysql://' + obj.shareControl.dataLink,
-              dbUserName: obj.shareControl.dataName,
-              dbPWD: obj.shareControl.dataPassword,
-              defaultAccept: obj.shareControl.defaultPermiss === '1',
-              accessPolicy: 'DAC',
-              chainName: 'demo'
-              // fieldList: fieldList
-            }
-            const appInfo = {
-              chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
-              coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
-              intro: '1',
-              name: obj.basicInfo.name,
-              type: '医疗健康',
-              version: '1.2.3'
-            }
-            const contractInfo = {
-              cApiName: 'generateMySQLProject',
-              cTemplate: 'MySQL',
-              upload: false
-            }
+            // addDataShareInfoBase(tempData).then((res) => {
+            //   if (res.data.code === 20000) {
+            //     this.$notify({
+            //       title: '成功',
+            //       message: res.data.message,
+            //       type: 'success',
+            //       duration: 2000
+            //     })
+            //     this.getShareList()
+            //   } else {
+            //     this.$notify({
+            //       title: '失败',
+            //       message: res.data.message,
+            //       type: 'warning',
+            //       duration: 2000
+            //     })
+            //   }
+            // }).catch((error) => {
+            //   console.log(error)
+            // })
 
-            this.postData().then((res) => {
-              var data = {
-                appInfo: appInfo,
-                contractCfg: contractCfg,
-                contractInfo: contractInfo
-              }
-              this.createShareData(data, res)
-            }).catch((error) => {
-              console.log(error)
-            })
+            // this.postData().then((res) => {
+
+            //   var _this = this
+            //   this.createShareData(data, res).then((response) => {
+            //     console.log(response)
+            //     _this.$store.commit('setNodeAddr', response.data.nodeAddr)
+            //     _this.$store.commit('setContractKey', response.data.keyPair.publicKey + ',' + response.data.keyPair.privateKey)
+            //     initWSocket()
+            //     setTimeout(() => {
+            //       window.startContract(obj.basicInfo.name)
+            //       _this.$store.commit('setContractKey', '')
+            //     }, 8000)
+            //   })
+            // }).catch((error) => {
+            //   console.log(error)
+            // })
             // window.generateMySQLProject(args, fieldList)
             // window.startContract(args.contractName)
           } else {
@@ -843,59 +930,103 @@ export default {
               },
               dataShareInfoFieldList: obj.formTable.tableData
             }
-            addDataShareInfoBase(tempData).then((res) => {
-              this.$notify({
-                title: '成功',
-                message: res.message,
-                type: 'success',
-                duration: 2000
+            _this = this
+            // 登录baas获取token
+            new Promise((resolve, reject) => {
+              _this.postData().then((res) => {
+                console.log(res)
+                resolve(res)
+              }).catch((error) => {
+                console.log(error)
+                reject()
               })
-              this.getShareList()
-            })
-            // const args = {
-            //   contractName: obj.basicInfo.name,
-            //   type: obj.basicInfo.type,
-            //   isPrivate: true,
-            //   defaultAccept: obj.shareControl.defaultPermiss,
-            //   base64EncodedData: obj.shareControl.base64EncodedData,
-            //   accessPolicy: 'DAC'
-            // }
-            // const fieldList = []
-            // var temp2 = {
-            //   name: 'name',
-            //   code: '*'
-            // }
-            // fieldList.push(temp2)
-            // window.generateCSVProject(args, fieldList)
-            // window.startContract(args.contractName)
-            const contractCfg = {
-              contractName: obj.basicInfo.name,
-              basicInfo: '生成csv数据合约',
-              // isPrivate: true,
-              base64EncodedData: obj.shareControl.base64EncodedData,
-              defaultAccept: obj.shareControl.defaultPermiss === '1',
-              accessPolicy: 'DAC'
-            }
-            const appInfo = {
-              chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
-              coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
-              intro: '21',
-              name: obj.basicInfo.name,
-              type: '1',
-              version: '1.0.0'
-            }
-            const contractInfo = {
-              cApiName: 'generateCSVProject',
-              cTemplate: 'CSV',
-              upload: false
-            }
-            this.postData().then((res) => {
-              var data = {
-                appInfo: appInfo,
-                contractCfg: contractCfg,
-                contractInfo: contractInfo
-              }
-              this.createShareData(data, res)
+            }).then(function(token) {
+              // 生成合约
+              return new Promise((resolve, reject) => {
+                const contractCfg = {
+                  contractName: obj.basicInfo.name,
+                  basicInfo: '生成csv数据合约',
+                  // isPrivate: true,
+                  base64EncodedData: obj.shareControl.base64EncodedData,
+                  defaultAccept: obj.shareControl.defaultPermiss === '1',
+                  accessPolicy: 'DAC'
+                }
+                const appInfo = {
+                  chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+                  coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
+                  intro: '21',
+                  name: obj.basicInfo.name,
+                  type: '1',
+                  version: '1.0.0'
+                }
+                const contractInfo = {
+                  cApiName: 'generateCSVProject',
+                  cTemplate: 'CSV',
+                  upload: false
+                }
+                var data = {
+                  appInfo: appInfo,
+                  contractCfg: contractCfg,
+                  contractInfo: contractInfo
+                }
+                _this.createShareData(data, token).then((res1) => {
+                  // 获得返回值当前合约节点ip, 当前合约公私玥
+                  _this.$store.commit('setNodeAddr', res1.data.nodeAddr)
+                  _this.$store.commit('setContractKey', res1.data.keyPair.publicKey + ',' + res1.data.keyPair.privateKey)
+                  resolve()
+                }).catch((error) => {
+                  console.log(error)
+                  reject()
+                })
+              })
+            }).then(function() {
+              // 建立websocket连接, 登录节点启动合约
+              return new Promise((resolve, reject) => {
+                initWSocket()
+                resolve()
+              })
+            }).then(function() {
+              // 传给自己后端存储
+              return new Promise((resolve, reject) => {
+                tempData.dataShareInfoBase.contractKey = _this.$store.state.dataShare.contractKey
+                addDataShareInfoBase(tempData).then((res) => {
+                  if (res.data.code === 20000) {
+                    _this.$notify({
+                      title: '成功',
+                      message: res.data.message,
+                      type: 'success',
+                      duration: 2000
+                    })
+                    _this.getShareList()
+                    resolve()
+                  } else {
+                    _this.$notify({
+                      title: '失败',
+                      message: res.data.message,
+                      type: 'warning',
+                      duration: 2000
+                    })
+                    reject()
+                  }
+                }).catch((error) => {
+                  console.log(error)
+                })
+              })
+            }).then(function() {
+              // 启动合约
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  window.startContract(obj.basicInfo.name)
+                  _this.$store.commit('setContractKey', '')
+                  resolve()
+                }, 8000)
+              })
+            }).then(function() {
+              return new Promise((resolve, reject) => {
+                // 更改新生成的合约的公钥
+                window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                resolve()
+              })
             }).catch((error) => {
               console.log(error)
             })
@@ -903,15 +1034,11 @@ export default {
         } else {
           this.dialogDataShare = true
         }
-      } else {
+      } else { // 修改
         var obj1 = this.getDataFromChild
         if (obj1 !== undefined) {
           this.dialogDataShare = false
           if (obj1.shareControl.defaultPermiss !== this.data.shareControl.defaultPermiss && obj1.shareControl.defaultPermiss === '2') {
-            console.log(
-              obj1.shareControl.defaultPermiss,
-              this.$store.state.user.pubKey.split(',')[0]
-            )
             window.executeContract(
               obj.basicInfo.name,
               'cancel',
@@ -921,6 +1048,7 @@ export default {
               }
             )
           }
+          // mysql类型修改
           if (obj.shareControl.fileType === '1') {
             const tempData = {
               dataShareInfoBase: {
@@ -946,15 +1074,26 @@ export default {
               dataShareInfoFieldList: obj.formTable.tableData
             }
             editMyShare(tempData).then((res) => {
-              this.$notify({
-                title: '成功',
-                message: res.message,
-                type: 'success',
-                duration: 2000
-              })
-              this.getShareList()
+              if (res.data.code === 20000) {
+                this.$notify({
+                  title: '修改成功',
+                  message: res.data.message,
+                  type: 'success',
+                  duration: 2000
+                })
+                this.getShareList()
+              } else {
+                this.$notify({
+                  title: '失败',
+                  message: res.data.message,
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
+            }).catch((error) => {
+              console.log(error)
             })
-          } else {
+          } else { // csv格式修改
             const tempData = {
               dataShareInfoBase: {
                 dataName: obj.basicInfo.name,
@@ -974,13 +1113,24 @@ export default {
               dataShareInfoFieldList: obj.formTable.tableData
             }
             editMyShare(tempData).then((res) => {
-              this.$notify({
-                title: '成功',
-                message: res.message,
-                type: 'success',
-                duration: 2000
-              })
-              this.getShareList()
+              if (res.data.code === 20000) {
+                this.$notify({
+                  title: '成功',
+                  message: res.data.message,
+                  type: 'success',
+                  duration: 2000
+                })
+                this.getShareList()
+              } else {
+                this.$notify({
+                  title: '失败',
+                  message: res.data.message,
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
+            }).catch((error) => {
+              console.log(error)
             })
           }
         } else {
@@ -992,8 +1142,7 @@ export default {
 }
 </script>
 <style scoped>
-/* .table {
-  width: 920px;
-  min-width: 930px;
-} */
+.table {
+  margin-top: 0px;
+}
 </style>
