@@ -358,9 +358,9 @@ var displayOutput = function(obj) {
 
 var initWSocket = function() {
   var host = '39.104.201.40:21030'
-  if (store.getters.nodeAddr !== '')
+  console.log(store.getters.nodeAddr)
+  if (store.getters.nodeAddr !== undefined && store.getters.nodeAddr !== '')
     host = store.getters.nodeAddr
-  console.log(typeof host)
   if (!host.startsWith('ws')) {
     host = 'ws://' + host
   }
@@ -397,8 +397,10 @@ var onGetNodeSessionID = function(data) {
   global.session = data.session
   var loginParam = {}
   var res = store.getters.pubKey.split(",")
-  if (store.getters.contractKey !== '')
+  if (store.getters.contractKey !== '' && store.getters.contractKey !== undefined) {
+    console.log(store.getters.contractKey)
     res = store.getters.contractKey.split(",")
+  }
   loginParam.pubKey = res[0]
   // loginParam.pubKey = global.sm2Key.publicKey
   // loginParam.pubKey =

@@ -306,6 +306,7 @@
 </template>
 
 <script>
+// import '@/utils/wsCluster.js'
 import { initWSocket } from '@/utils/wsCluster'
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
@@ -455,7 +456,9 @@ export default {
               type: v.typeId,
               useAble: v.auditState,
               permiss: v.accessRight,
-              createDate: v.createDate
+              createDate: v.createDate,
+              contractKey: v.contractKey,
+              nodeAddr: v.nodeAddr
             }
             this.shareList.push(temp)
           }
@@ -657,19 +660,26 @@ export default {
     },
     // 删除
     handleDelete(row) {
-      window.deleteFile(row.name)
-      window.killContractProcess(row.name, row.contractKey)
-      var _this = this
+      console.log(row)
+      this.$store.commit('setContractKey', row.contractKey)
+      this.$store.commit('setNodeAddr', row.nodeAddr)
+      initWSocket()
       deleteMyShare(row.id).then((res) => {
         if (res.data.code === 20000) {
-          const index = _this.shareList.indexOf(row)
-          _this.shareList.splice(index, 1)
+          const index = this.shareList.indexOf(row)
+          this.shareList.splice(index, 1)
           this.$notify({
             title: '删除成功',
             message: res.data.message,
             type: 'success',
             duration: 2000
           })
+          setTimeout(() => {
+            window.killContractProcess(row.name)
+            window.deleteFile(row.name)
+          }, 5000)
+          this.$store.commit('setContractKey', '')
+          this.$store.commit('setNodeAddr', '')
         } else {
           this.$notify({
             title: '删除失败',
@@ -777,6 +787,12 @@ export default {
                 resolve(res)
               }).catch((error) => {
                 console.log(error)
+                _this.$notify({
+                  title: '失败',
+                  message: '登录baas失败',
+                  type: 'warning',
+                  duration: 2000
+                })
                 reject()
               })
             }).then(function(token) {
@@ -818,6 +834,12 @@ export default {
                   _this.$store.commit('setContractKey', res1.data.keyPair.publicKey + ',' + res1.data.keyPair.privateKey)
                   resolve()
                 }).catch((error) => {
+                  _this.$notify({
+                    title: '失败',
+                    message: '创建合约失败',
+                    type: 'warning',
+                    duration: 2000
+                  })
                   console.log(error)
                   reject()
                 })
@@ -832,6 +854,7 @@ export default {
               // 传给自己后端存储
               return new Promise((resolve, reject) => {
                 tempData.dataShareInfoBase.contractKey = _this.$store.state.dataShare.contractKey
+                tempData.dataShareInfoBase.nodeAddr = _this.$store.state.dataShare.nodeAddr
                 addDataShareInfoBase(tempData).then((res) => {
                   if (res.data.code === 20000) {
                     _this.$notify({
@@ -861,6 +884,7 @@ export default {
                 setTimeout(() => {
                   window.startContract(obj.basicInfo.name)
                   _this.$store.commit('setContractKey', '')
+                  _this.$store.commit('setNodeAddr', '')
                   resolve()
                 }, 8000)
               })
@@ -938,6 +962,12 @@ export default {
                 resolve(res)
               }).catch((error) => {
                 console.log(error)
+                _this.$notify({
+                  title: '失败',
+                  message: '登录baas失败',
+                  type: 'warning',
+                  duration: 2000
+                })
                 reject()
               })
             }).then(function(token) {
@@ -976,6 +1006,12 @@ export default {
                   resolve()
                 }).catch((error) => {
                   console.log(error)
+                  _this.$notify({
+                    title: '失败',
+                    message: '创建合约失败',
+                    type: 'warning',
+                    duration: 2000
+                  })
                   reject()
                 })
               })
@@ -989,6 +1025,7 @@ export default {
               // 传给自己后端存储
               return new Promise((resolve, reject) => {
                 tempData.dataShareInfoBase.contractKey = _this.$store.state.dataShare.contractKey
+                tempData.dataShareInfoBase.nodeAddr = _this.$store.state.dataShare.nodeAddr
                 addDataShareInfoBase(tempData).then((res) => {
                   if (res.data.code === 20000) {
                     _this.$notify({
@@ -1018,6 +1055,7 @@ export default {
                 setTimeout(() => {
                   window.startContract(obj.basicInfo.name)
                   _this.$store.commit('setContractKey', '')
+                  _this.$store.commit('setNodeAddr', '')
                   resolve()
                 }, 8000)
               })
