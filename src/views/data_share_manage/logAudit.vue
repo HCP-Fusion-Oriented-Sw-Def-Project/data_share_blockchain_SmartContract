@@ -4,7 +4,10 @@
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日调用数量统计</label>
-          <el-select v-model="days1" size="mini">
+          <el-select
+            v-model="days1"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -14,12 +17,18 @@
           </el-select>
           <label>天数：</label>
         </el-row>
-        <div id="chart1" :style="{ height: '400px', width: '400px' }"></div>
+        <div
+          id="chart1"
+          :style="{ height: '400px', width: '400px' }"
+        ></div>
       </el-col>
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日不同数据合约的调用统计</label>
-          <el-select v-model="days2" size="mini">
+          <el-select
+            v-model="days2"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -29,12 +38,18 @@
           </el-select>
           <label>天数：</label>
         </el-row>
-        <div id="chart2" :style="{ height: '400px', width: '400px' }"></div>
+        <div
+          id="chart2"
+          :style="{ height: '400px', width: '400px' }"
+        ></div>
       </el-col>
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日调用合约关系图</label>
-          <el-select v-model="days3" size="mini">
+          <el-select
+            v-model="days3"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -59,7 +74,11 @@
     <el-row>
       <el-row style="width: 100%;">
         <label style="color: #606266;font-size:18px;float:left">近期日志</label>
-        <el-select v-model="count" style="float: right;margin-bottom: 5px" size="mini">
+        <el-select
+          v-model="count"
+          style="float: right;margin-bottom: 5px"
+          size="mini"
+        >
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -76,28 +95,45 @@
         border
         highlight-current-row
       >
-        <el-table-column align="center" width="65" type="index" :index="indexMethod" />
+        <el-table-column
+          align="center"
+          width="65"
+          type="index"
+          :index="indexMethod"
+        />
         <el-table-column label="contractID">
           <template slot-scope="scope">
             <span>{{ scope.row.contractID }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="contractName">
+        <el-table-column
+          align="center"
+          label="contractName"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.contractName }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="function">
+        <el-table-column
+          align="center"
+          label="function"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.function }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="costTime">
+        <el-table-column
+          align="center"
+          label="costTime"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.costTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="date">
+        <el-table-column
+          align="center"
+          label="date"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.date | formatTimes }}</span>
           </template>
@@ -119,7 +155,7 @@
 </template>
 
 <script>
-import '@/utils/wsCluster.js'
+import { initWSocket } from '@/utils/wsCluster'
 
 import echarts from 'echarts'
 import store from '../../store'
@@ -552,7 +588,7 @@ export default {
       deep: true
     },
     contractLogListByDate(nval) {
-      const contractList = JSON.parse(JSON.stringify(nval)).data
+      const contractList = nval.data
       if (contractList.length !== 0) {
         // 将所有节点先放入图中
         var data = []
@@ -715,8 +751,15 @@ export default {
       this.getContract(nval)
     }
   },
+  created() {
+    this.$store.commit('setContractKey', '04421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setNodeAddr', '39.104.208.148:21030')
+    setTimeout(() => {
+      this.getlist()
+    }, 1000)
+    initWSocket()
+  },
   mounted() {
-    this.getlist()
   },
   methods: {
     getlist() {

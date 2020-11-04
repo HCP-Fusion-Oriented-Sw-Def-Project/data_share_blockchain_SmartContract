@@ -7,10 +7,22 @@
       style="margin-top: 12px;margin-bottom: 20px"
       simple
     >
-      <el-step title="算法作业描述" icon="el-icon-edit" />
-      <el-step title="算法选择" icon="el-icon-edit" />
-      <el-step title="数据源选择" icon="el-icon-edit" />
-      <el-step title="参数配置及运行" icon="el-icon-edit" />
+      <el-step
+        title="算法作业描述"
+        icon="el-icon-edit"
+      />
+      <el-step
+        title="算法选择"
+        icon="el-icon-edit"
+      />
+      <el-step
+        title="数据源选择"
+        icon="el-icon-edit"
+      />
+      <el-step
+        title="参数配置及运行"
+        icon="el-icon-edit"
+      />
       <!-- <el-step title="运行" icon="el-icon-edit" /> -->
     </el-steps>
     <div>
@@ -22,20 +34,41 @@
         label-width="150px"
         style=" margin-left:50px;margin-right:50px; float:left;width:400px; "
       >
-        <el-form-item v-if="active==0" label="算法作业名称:" prop="name">
+        <el-form-item
+          v-if="active==0"
+          label="算法作业名称:"
+          prop="name"
+        >
           <el-input v-model="algorProcess.name" />
         </el-form-item>
-        <el-form-item v-if="active==0" label="算法作业描述:">
-          <el-input v-model="algorProcess.description" type="textarea" :rows="2" maxlength="250" />
+        <el-form-item
+          v-if="active==0"
+          label="算法作业描述:"
+        >
+          <el-input
+            v-model="algorProcess.description"
+            type="textarea"
+            :rows="2"
+            maxlength="250"
+          />
         </el-form-item>
-        <el-form-item v-if="active==1" label="选择算法:" prop="algorithm" aria-placeholder="点击选择...">
+        <el-form-item
+          v-if="active==1"
+          label="选择算法:"
+          prop="algorithm"
+          aria-placeholder="点击选择..."
+        >
           <el-input
             v-model="algorProcess.algorithm"
             :disabled="algorDialog"
             @focus="algorDialog=true, flag=1,getAlgorList()"
           />
         </el-form-item>
-        <el-form-item v-if="active==2" label="选择数据源:" prop="datasource">
+        <el-form-item
+          v-if="active==2"
+          label="选择数据源:"
+          prop="datasource"
+        >
           <el-input
             v-model="algorProcess.datasource"
             :disabled="dataSourceDialog"
@@ -54,22 +87,42 @@
         style="width: 500px; margin: 0 auto;"
         :height="fullHeight-500"
       >
-        <el-table-column align="center" width="65" type="index" label="序号" />
-        <el-table-column align="center" width="110px" label="参数名称">
+        <el-table-column
+          align="center"
+          width="65"
+          type="index"
+          label="序号"
+        />
+        <el-table-column
+          align="center"
+          width="110px"
+          label="参数名称"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="参数值">
+        <el-table-column
+          align="center"
+          label="参数值"
+        >
           <template slot-scope="scope">
             <el-input v-model="scope.row.content" />
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div slot="footer" class="dialog-footer" style="float:right;">
+    <div
+      slot="footer"
+      class="dialog-footer"
+      style="float:right;"
+    >
       <!-- <div style="width: 100%"> -->
-      <el-button v-if="active!=0" style="margin-top: 12px;" @click="prev">
+      <el-button
+        v-if="active!=0"
+        style="margin-top: 12px;"
+        @click="prev"
+      >
         上一步
       </el-button>
       <el-button
@@ -80,15 +133,27 @@
       >
         下一步
       </el-button>
-      <el-button v-if="active==3" style="margin-top: 12px;" @click="handleSave">
+      <el-button
+        v-if="active==3"
+        style="margin-top: 12px;"
+        @click="handleSave"
+      >
         保存
       </el-button>
-      <el-button v-if="active==3" style="margin-top: 12px;" @click="handleRun">
+      <el-button
+        v-if="active==3"
+        style="margin-top: 12px;"
+        @click="handleRun"
+      >
         运行
       </el-button>
       <!-- </div> -->
     </div>
-    <el-dialog title="请选择算法" :visible.sync="algorDialog" width="600px">
+    <el-dialog
+      title="请选择算法"
+      :visible.sync="algorDialog"
+      width="600px"
+    >
       <el-table
         :data="
           algorithmList.slice(
@@ -99,17 +164,28 @@
         :height="350"
         border
       >
-        <el-table-column align="center" label="算法名" width="120px">
+        <el-table-column
+          align="center"
+          label="算法名"
+          width="120px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="算法拥有者" width="100px">
+        <el-table-column
+          align="center"
+          label="算法拥有者"
+          width="100px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.owner }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="算法路径">
+        <el-table-column
+          align="center"
+          label="算法路径"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.path }}</span>
           </template>
@@ -145,7 +221,11 @@
         />
       </div>
     </el-dialog>
-    <el-dialog title="请选择数据源" :visible.sync="dataSourceDialog" width="600px">
+    <el-dialog
+      title="请选择数据源"
+      :visible.sync="dataSourceDialog"
+      width="600px"
+    >
       <el-table
         :data="
           dataSourceList.slice(
@@ -157,17 +237,28 @@
         :height="300"
         style="border-bottom:"
       >
-        <el-table-column align="center" label="数据源名" width="120px">
+        <el-table-column
+          align="center"
+          label="数据源名"
+          width="120px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="数据源拥有者" width="120px">
+        <el-table-column
+          align="center"
+          label="数据源拥有者"
+          width="120px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.owner }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="数据路径">
+        <el-table-column
+          align="center"
+          label="数据路径"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.path }}</span>
           </template>
@@ -207,7 +298,8 @@
 </template>
 
 <script>
-import '@/utils/wsCluster.js'
+// import '@/utils/wsCluster.js'
+import { initWSocket } from '@/utils/wsCluster'
 import { addAlgoTask, modifyAlgoTask } from '@/api/algoTask'
 import { getParameter } from '@/api/algoParameter'
 export default {
@@ -309,7 +401,12 @@ export default {
     }
   },
   created() {
-    this.getData()
+    this.$store.commit('setContractKey', '04421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setNodeAddr', '39.104.208.148:21030')
+    setTimeout(() => {
+      this.getData()
+    }, 1000)
+    initWSocket()
   },
   mounted() {
     const that = this
@@ -391,29 +488,40 @@ export default {
       this.algorProcess.algoTaskParamList = []
       getParameter(this.algorProcess.algorithm).then((res) => {
         console.log(res)
-        var temp = res.data.data
-        var time = new Date()
-        for (var i = 0; i <= temp.length - 1; i++) {
-          if (temp[i].name === 'resultPath') {
-            this.algorProcess.algoTaskParamList.push({
-              name: temp[i].name,
-              content: '/blockchain/result/' + this.algorProcess.algorithm + '/algor/' + String(time.getTime()),
-              remarks: temp[i].remarks
-            })
-          } else if (temp[i].name === 'modelPath') {
-            this.algorProcess.algoTaskParamList.push({
-              name: temp[i].name,
-              content: '/blockchain/result/' + this.algorProcess.algorithm + '/model/' + String(time.getTime()),
-              remarks: temp[i].remarks
-            })
-          } else {
-            this.algorProcess.algoTaskParamList.push({
-              name: temp[i].name,
-              content: '',
-              remarks: temp[i].remarks
-            })
+        if (res.data.code === 20000) {
+          var temp = res.data.data
+          var time = new Date()
+          for (var i = 0; i <= temp.length - 1; i++) {
+            if (temp[i].name === 'resultPath') {
+              this.algorProcess.algoTaskParamList.push({
+                name: temp[i].name,
+                content: '/blockchain/result/' + this.algorProcess.algorithm + '/algor/' + String(time.getTime()),
+                remarks: temp[i].remarks
+              })
+            } else if (temp[i].name === 'modelPath') {
+              this.algorProcess.algoTaskParamList.push({
+                name: temp[i].name,
+                content: '/blockchain/result/' + this.algorProcess.algorithm + '/model/' + String(time.getTime()),
+                remarks: temp[i].remarks
+              })
+            } else {
+              this.algorProcess.algoTaskParamList.push({
+                name: temp[i].name,
+                content: '',
+                remarks: temp[i].remarks
+              })
+            }
           }
+        } else {
+          this.$notify({
+            title: '获取参数失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
         }
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 选择算法
