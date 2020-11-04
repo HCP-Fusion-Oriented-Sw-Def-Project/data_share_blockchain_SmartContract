@@ -13,7 +13,7 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API1 + '/task', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   // baseURL: 'http://10.62.10.87:8104/share', // api的base_url, // url = base url + request url
-  // baseURL: 'http://10.62.10.70:8146', // api的base_url, // url = base url + request url
+  // baseURL: 'http://10.62.10.100:7979', // api的base_url, // url = base url + request url
   timeout: 5000 // request timeout
 })
 

@@ -450,12 +450,12 @@ var onCountContractLogGroupByCategory = function(data) {
 }
 var onQueryContractLogByOffset = function(data) {
   // console.log('onQueryContractLogByOffset')
-  // console.log(data)
+  console.log(data)
   store.commit('setContractLogList', data)
 }
 var onQueryContractLogByDate = function(data) {
   // console.log('onQueryContractLogByDate')
-  // console.log(data)
+  console.log(data)
   store.commit('setContractLogListByDate', data)
 }
 var onStopContract = function(data) {
@@ -682,7 +682,7 @@ var onListContractProcess = function(data) {
   // store.getters.startContract = JSON.parse(data.data)
   // console.log('onListContractProcess')
   // console.log(JSON.parse(data.data))
-  // store.commit('setContractProcessList', JSON.parse(data.data))
+  store.commit('setContractProcessList', JSON.parse(data.data))
   // $('#selectContract').html('')
   // global.contracts = JSON.parse(data.data)
   // $('#selectContract').append("<option value='-1'>选择合约</option>")

@@ -10,7 +10,7 @@
     >
       <div class="title-container">
         <h3 class="title">
-          {{ $t('login.title') }}
+          {{ $t('login.title1') }}
         </h3>
         <!--  <lang-select class="set-language" /> -->
       </div>
@@ -86,7 +86,7 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >
-        {{ $t('login.logIn') }}
+        {{ $t('login.logIn1') }}
       </el-button>
 
       <!--  <div style="position:relative">
@@ -147,7 +147,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'ptest',
+        username: 'utest',
         password: 'test@123456',
         imageCode: '',
         randomStr: ''

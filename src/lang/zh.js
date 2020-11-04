@@ -74,7 +74,9 @@ export default {
   },
   login: {
     title: '系统登录',
+    title1: '北京理工大学政务大数据系统登录',
     logIn: '登录',
+    logIn1: '登录并跳转',
     username: '账号',
     password: '密码',
     any: '随便填',

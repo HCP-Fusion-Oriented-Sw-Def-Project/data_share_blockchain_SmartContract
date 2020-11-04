@@ -29,10 +29,19 @@
         </el-button>
       </div>
       <div style="margin-bottom: 10px;margin-top: 0px">
-        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleAdd">
+        <el-button
+          size="small"
+          type="primary"
+          icon="el-icon-plus"
+          @click="handleAdd"
+        >
           添加
         </el-button>
-        <el-button size="small" type="info" @click="deleteInBatches">
+        <el-button
+          size="small"
+          type="info"
+          @click="deleteInBatches"
+        >
           <svg-icon icon-class="delete" />批量删除
         </el-button>
       </div>
@@ -51,45 +60,86 @@
       :height="fullHeight-300"
       @selection-change="handleBatchSelect"
     >
-      <el-table-column type="selection" width="55" />
-      <el-table-column align="center" width="65" type="index" label="序号" />
-      <el-table-column align="center" width="150px" label="算法作业名称">
+      <el-table-column
+        type="selection"
+        width="55"
+      />
+      <el-table-column
+        align="center"
+        width="65"
+        type="index"
+        label="序号"
+      />
+      <el-table-column
+        align="center"
+        width="150px"
+        label="算法作业名称"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="算法作业描述">
+      <el-table-column
+        align="center"
+        label="算法作业描述"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间">
+      <el-table-column
+        align="center"
+        label="创建时间"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.createDate | formatTimes }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" width="200px" label="算法使用">
+      <el-table-column
+        align="center"
+        width="200px"
+        label="算法使用"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.algorithm }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" width="200px" label="算法数据源">
+      <el-table-column
+        align="center"
+        width="200px"
+        label="算法数据源"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.datasource }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="状态" width="100">
+      <el-table-column
+        align="center"
+        label="状态"
+        width="100"
+      >
         <template slot-scope="scope">
           <!-- <span>{{scope.row.status}}</span> -->
-          <el-tag v-if="scope.row.status == 1" :type="scope.row.status | statusFilter">
+          <el-tag
+            v-if="scope.row.status == 1"
+            :type="scope.row.status | statusFilter"
+          >
             未执行
           </el-tag>
-          <el-tag v-if="scope.row.status == 2" :type="scope.row.status | statusFilter">
+          <el-tag
+            v-if="scope.row.status == 2"
+            :type="scope.row.status | statusFilter"
+          >
             已完成
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="400" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="400"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -126,10 +176,18 @@
           >
             可视化
           </el-button>
-          <el-popover placement="top" width="160" trigger="click">
+          <el-popover
+            placement="top"
+            width="160"
+            trigger="click"
+          >
             <p>确定删除吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="cancelPopover(scope.row, scope.$index)">
+              <el-button
+                size="mini"
+                type="text"
+                @click="cancelPopover(scope.row, scope.$index)"
+              >
                 取消
               </el-button>
               <el-button
@@ -169,6 +227,7 @@
 </template>
 
 <script>
+import { initWSocket } from '@/utils/wsCluster'
 import waves from '@/directive/waves' // 水波纹指令
 import { getAlgoTaskList, deleteAlgoTask, deleteAlgoTaskByIds, modifyAlgoTask } from '@/api/algoTask'
 import { fetchFileInfo } from '@/api/file'
@@ -207,52 +266,7 @@ export default {
         pages: 1,
         rows: 10
       },
-      algorTaskList: [{
-        id: '',
-        name: 'test',
-        description: 'test',
-        algorithm: 'kmeans',
-        algorithmpath: '/path',
-        datasource: 'cancer',
-        datasourcepath: '/path',
-        // 参数数组
-        algoTaskParamList: [{
-          name: '特征列数',
-          paramValue: '0;1;2;3',
-        },
-        {
-          name: 'k值',
-          paramValue: '2',
-        }, {
-          name: '运行结果路径',
-          paramValue: '/blockchain/result/',
-        }],
-        // 选择保存还是立即执行
-        status: '1',
-      },
-      {
-        id: '',
-        name: 'test',
-        description: 'test',
-        algorithm: 'kmeans',
-        algorithmpath: '/path',
-        datasource: 'cancer',
-        datasourcepath: '/path',
-        // 参数数组
-        algoTaskParamList: [{
-          name: '特征列数',
-          paramValue: '0,1,2,3,4,5,6,7,8',
-        },
-        {
-          name: 'k值',
-          paramValue: '2',
-        }, {
-          name: '运行结果路径',
-          paramValue: '/blockchain/result/',
-        }],
-        // 选择保存还是立即执行
-        status: '2',
-      }],
+      algorTaskList: [],
       total: 0,
       listLoading: true,
       fullHeight: document.documentElement.clientHeight,
@@ -272,7 +286,12 @@ export default {
     }
   },
   created() {
-    this.getAlgorList()
+    this.$store.commit('setContractKey', '04wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setNodeAddr', '39.104.208.148:21030')
+    setTimeout(() => {
+      this.getAlgorList()
+    }, 1000)
+    initWSocket()
   },
   mounted() {
     const that = this
@@ -399,10 +418,20 @@ export default {
       this.algorTaskList = []
       this.listLoading = true
       getAlgoTaskList().then((res) => {
-        console.log(res)
-        this.algorTaskList = res.data.data
-        this.total = this.algorTaskList.length
-        this.listLoading = false
+        if (res.data.code === 20000) {
+          this.algorTaskList = res.data.data
+          this.total = this.algorTaskList.length
+          this.listLoading = false
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 查找
@@ -421,7 +450,24 @@ export default {
       }
       deleteAlgoTaskByIds(this.mutliSelection.join(',')).then((res) => {
         console.log(res)
-        this.getAlgorList()
+        if (res.data.code === 20000) {
+          this.$notify({
+            title: '删除成功',
+            message: res.data.message,
+            type: 'success',
+            duration: 2000
+          })
+          this.getAlgorList()
+        } else {
+          this.$notify({
+            title: '删除失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
     },
     // 添加
@@ -434,6 +480,7 @@ export default {
     },
     // 编辑
     handleUpdate(row) {
+      // 先按remarks字段将算法参数排序,执行合约参数顺序要统一
       row.algoTaskParamList.sort(function(a, b) {
         if (a.remarks < b.remarks) {
           return -1
@@ -443,7 +490,6 @@ export default {
           return 1
         }
       })
-      console.log(row)
       this.$router.push({ name: 'addAlgorithmJob', params: { id: row.id, row: row } })
     },
     // 修改状态
@@ -461,6 +507,16 @@ export default {
       })
       modifyAlgoTask(row).then((res) => {
         console.log(res)
+        if (res.data.code !== 20000) {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
       args1.push(row.datasourcepath)
       for (const v of row.algoTaskParamList) {
@@ -471,7 +527,6 @@ export default {
         args: args1
       }
       var arg = { url: 'http://152.136.214.48:8998/batches/', data: JSON.stringify(data) }
-      console.log(JSON.stringify(arg))
       window.executeContract('algoModule', 'executeByLivy', JSON.stringify(arg), (res) => {
         console.log(res)
       })
@@ -486,8 +541,22 @@ export default {
         console.log(res)
       })
       deleteAlgoTask(row.id).then((res) => {
-        console.log(res)
-        this.getAlgorList()
+        if (res.data.code === 20000) {
+          this.getAlgorList()
+          this.$notify({
+            title: '删除成功',
+            message: res.data.message,
+            type: 'success',
+            duration: 2000
+          })
+        } else {
+          this.$notify({
+            title: '删除失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
       })
     },
     cancelPopover(row, index) {

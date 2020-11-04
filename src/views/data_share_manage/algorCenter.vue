@@ -30,10 +30,19 @@
       </div>
     </div>
     <div style="margin-bottom: 10px;margin-top: 0px">
-      <el-button size="small" type="primary" icon="el-icon-plus" @click="handleAdd">
+      <el-button
+        size="small"
+        type="primary"
+        icon="el-icon-plus"
+        @click="handleAdd"
+      >
         添加
       </el-button>
-      <el-button size="small" type="info" @click="deleteInBatches">
+      <el-button
+        size="small"
+        type="info"
+        @click="deleteInBatches"
+      >
         <svg-icon icon-class="delete" />批量删除
       </el-button>
     </div>
@@ -51,29 +60,58 @@
         :height="fullHeight-300"
         @selection-change="handleBatchDelete"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="center" type="index" label="序号" width="80" />
-        <el-table-column align="center" label="算法拥有者">
+        <el-table-column
+          type="selection"
+          width="55"
+        />
+        <el-table-column
+          align="center"
+          type="index"
+          label="序号"
+          width="80"
+        />
+        <el-table-column
+          align="center"
+          label="算法拥有者"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.owner }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="算法名称">
+        <el-table-column
+          align="center"
+          label="算法名称"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="算法路径">
+        <el-table-column
+          align="center"
+          label="算法路径"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.path }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" width="300px" label="操作">
+        <el-table-column
+          align="center"
+          width="300px"
+          label="操作"
+        >
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleEdit(scope.row)"
+            >
               详情
             </el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(scope.row)">
+            <el-button
+              type="danger"
+              size="mini"
+              @click="handleDelete(scope.row)"
+            >
               删除
             </el-button>
           </template>
@@ -97,7 +135,7 @@
 </template>
 
 <script>
-import '@/utils/wsCluster.js'
+import { initWSocket } from '@/utils/wsCluster'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   directives: {
@@ -129,7 +167,12 @@ export default {
     }
   },
   created() {
-    this.getAlgorithmList()
+    this.$store.commit('setContractKey', '04421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setNodeAddr', '39.104.208.148:21030')
+    setTimeout(() => {
+      this.getAlgorithmList()
+    }, 1000)
+    initWSocket()
   },
   mounted() {
     const that = this
