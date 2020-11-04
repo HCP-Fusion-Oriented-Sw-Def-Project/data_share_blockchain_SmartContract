@@ -18,10 +18,20 @@
         />
       </div>
       <div style="float:left;margin-left:230px;">
-        <el-button v-waves type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-button
+          v-waves
+          type="primary"
+          icon="el-icon-search"
+          @click="handleFilter"
+        >
           查找
         </el-button>
-        <el-button v-waves type="info" icon="el-icon-refresh" @click="resetListQuery">
+        <el-button
+          v-waves
+          type="info"
+          icon="el-icon-refresh"
+          @click="resetListQuery"
+        >
           重置
         </el-button>
       </div>
@@ -43,21 +53,41 @@
         fit
         highlight-current-row
         style="width: 100%"
-        :height="fullHeight-400"
+        :height="fullHeight-300"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="center" label="序号" width="65" type="index" />
-        <el-table-column align="center" label="名称" width="150px">
+        <el-table-column
+          type="selection"
+          width="55"
+        />
+        <el-table-column
+          align="center"
+          label="序号"
+          width="65"
+          type="index"
+        />
+        <el-table-column
+          align="center"
+          label="名称"
+          width="150px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.dataName }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="所属类别" width="150px">
+        <el-table-column
+          align="center"
+          label="所属类别"
+          width="150px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.typeId }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="访问权限" width="100">
+        <el-table-column
+          align="center"
+          label="访问权限"
+          width="100"
+        >
           <template slot-scope="scope">
             <span v-if="scope.row.accessRight == '1'">无条件访问</span>
             <span v-if="scope.row.accessRight == '2'">申请后访问</span>
@@ -95,15 +125,30 @@
         />
       </div>
     </div>
-    <el-dialog v-dialogDrag title="数据详情" :visible.sync="dialogDataList" width="1300px" top="7vh">
+    <el-dialog
+      v-dialogDrag
+      title="数据详情"
+      :visible.sync="dialogDataList"
+      width="1300px"
+      top="7vh"
+    >
       <div v-if="dialogDataList">
-        <edit-share ref="shareData" :data="data" />
+        <edit-share
+          ref="shareData"
+          :data="data"
+        />
       </div>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogDataList = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogReason = true">
+        <el-button
+          type="primary"
+          @click="dialogReason = true"
+        >
           申请使用
         </el-button>
       </div>
@@ -117,12 +162,21 @@
       width="300px"
       style="margin-top: 150px;"
     >
-      <el-input v-model="applyReason" type="textarea" />
-      <div slot="footer" class="dialog-footer">
+      <el-input
+        v-model="applyReason"
+        type="textarea"
+      />
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogReason = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogReason=false;dialogDataList=false;apply()">
+        <el-button
+          type="primary"
+          @click="dialogReason=false;dialogDataList=false;apply()"
+        >
           确定
         </el-button>
       </div>
@@ -133,7 +187,8 @@
 <script>
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
-import '@/utils/wsCluster.js'
+import $ from 'jquery'
+import { init } from '@/utils/wsCluster'
 import { getDataShareInfoBase, getMyShareParam, addApplication } from '@/api/dataShare'
 export default {
   directives: {
@@ -160,22 +215,22 @@ export default {
       // 申请理由
       dialogReason: false,
       applyReason: '',
-      listTest: []
+      // listTest: []
     }
   },
   computed: {
-    listCon() {
-      return this.$store.state.dataShare.contractProcessList
-    }
+    // listCon() {
+    //   return this.$store.state.dataShare.contractProcessList
+    // }
   },
   watch: {
     fullHeight(val) {
       this.fullHeight = val
     },
-    listCon(val) {
-      this.listTest = val
-      this.getDataList()
-    }
+    // listCon(val) {
+    //   this.listTest = val
+    //   this.getDataList()
+    // }
   },
   mounted() {
     const that = this
@@ -187,31 +242,127 @@ export default {
     }
   },
   created() {
-    this.listTest = this.$store.state.dataShare.contractProcessList
+    // this.listTest = this.$store.state.dataShare.contractProcessList
+    init()
     this.getDataList()
   },
   methods: {
+    // 登录bass平台
+    loginBass() {
+      return fetch('https://trybaas.internetapi.cn/api/auth/login', {
+        headers: {
+          'accept': 'application/json, text/plain, */*',
+          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+          'content-type': 'application/json;charset=UTF-8',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin'
+        },
+        referrer: 'https://trybaas.internetapi.cn/',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: JSON.stringify({ email: 'demo@bdware.org', password: 'test@123' }),
+        method: 'POST',
+        mode: 'cors'
+      }).then(response => response.headers.get('authorization'))
+    },
     getDataList() {
       var _this = this
-      this.listLoading = true
-      var tempData = []
-      for (const v of this.listTest) {
-        tempData.push(v.name)
-      }
-      getDataShareInfoBase(tempData.join(',')).then((res) => {
-        console.log(res)
-        for (const v of res.data.data) {
-          if (v.accessRight === '2') {
-            _this.dataList.push(v)
+      new Promise((resolve, reject) => {
+        _this.loginBass().then((res) => {
+          if (res !== null) { resolve(res) } else { reject() }
+        })
+      }).then(function(token) {
+        return new Promise((resolve, reject) => {
+          var setting = {
+            url: 'https://trybaas.internetapi.cn/api/apps/61830b9d-2cbe-4afb-9247-2e7a1c325994/contracts',
+            method: 'GET',
+            timeout: '0',
+            headers: {
+              'Content-Type': 'application/json',
+              'accept': 'application/json, text/plain, */*',
+              'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+              'authorization': 'Bearer ' + token,
+            },
           }
-        }
-        _this.total = _this.dataList.length
-        _this.listLoading = false
+          $.ajax(setting).done(function(response) {
+            if (response.code === 20000) {
+              resolve(response)
+            } else {
+              _this.$notify({
+                title: '获取合约列表失败',
+                type: 'error',
+                duration: 2000
+              })
+              reject()
+            }
+          })
+        })
+      }).then(function(result) {
+        return new Promise((resolve, reject) => {
+          var data = result.data.data
+          console.log(result)
+          _this.listLoading = true
+          var tempData = []
+          // data为内部变量都是对象,用in访问
+          for (const v in data) {
+            for (const i of data[v].contracts) {
+              tempData.push(i.contractName)
+            }
+          }
+          getDataShareInfoBase(tempData.join(',')).then((res) => {
+            console.log(res)
+            if (res.data.code === 20000) {
+              _this.dataList = res.data.data
+              _this.total = _this.dataList.length
+              _this.listLoading = false
+            } else {
+              _this.$notify({
+                title: '获取数据失败',
+                message: res.data.message,
+                type: 'error',
+                duration: 2000
+              }).catch((error) => {
+                console.log(error)
+              })
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+        })
+      }).catch((error) => {
+        console.log(error)
       })
+      // var _this = this
+      // this.listLoading = true
+      // var tempData = []
+      // for (const v of this.listTest) {
+      //   tempData.push(v.name)
+      // }
+      // getDataShareInfoBase(tempData.join(',')).then((res) => {
+      //   console.log(res)
+      //   // for (const v of res.data.data) {
+      //   //   if (v.accessRight === '2') {
+      //   //     this.dataList.push(v)
+      //   //   }
+      //   // }
+      //   if (res.data.code === 20000) {
+      //     this.dataList = res.data.data
+      //     this.total = this.dataList.length
+      //     this.listLoading = false
+      //   } else {
+      //     this.$notify({
+      //       title: '获取数据失败',
+      //       message: res.data.message,
+      //       type: 'error',
+      //       duration: 2000
+      //     }).catch((error) => {
+      //       console.log(error)
+      //     })
+      //   }
+      // })
     },
     handleApply(row) {
       window.executeContract(row.dataName, 'getStatus', '', (res) => {
-        // console.log(res)
         if (res.result === '审核通过') {
           this.$confirm('该数据您已申请通过,无法再次申请!', '提示', {
             confirmButtonText: '确定',
@@ -229,31 +380,42 @@ export default {
           })
         } else {
           getMyShareParam(row.id).then((res) => {
-            this.data = {
-              id: row.id,
-              basicInfo: {
-                name: row.dataName,
-                discription: row.dataDescription,
-                work: row.industryType,
-                typeId: row.typeId,
-                providerOffice: row.provideOrgan,
-                provider: row.dataProvider,
-                cyc: row.updatePeriod,
-                type: '类别'
-              },
-              shareControl: {
-                permiss: row.accessRight,
-                public: row.isPublic,
-                defaultPermiss: row.isPassed,
-                fileType: row.dataType,
-                shareType: row.shareType,
-                discription: row.shareDescription,
-              },
-              tableData: res.data.data.dataShareInfoFieldList,
-              isAllEdited: true,
-              isPartEdited: true
+            if (res.data.code === 20000) {
+              this.data = {
+                id: row.id,
+                basicInfo: {
+                  name: row.dataName,
+                  discription: row.dataDescription,
+                  work: row.industryType,
+                  typeId: row.typeId,
+                  providerOffice: row.provideOrgan,
+                  provider: row.dataProvider,
+                  cyc: row.updatePeriod,
+                  type: '类别'
+                },
+                shareControl: {
+                  permiss: row.accessRight,
+                  public: row.isPublic,
+                  defaultPermiss: row.isPassed,
+                  fileType: row.dataType,
+                  shareType: row.shareType,
+                  discription: row.shareDescription,
+                },
+                tableData: res.data.data.dataShareInfoFieldList,
+                isAllEdited: true,
+                isPartEdited: true
+              }
+            } else {
+              this.$notify({
+                title: '失败',
+                message: res.data.message,
+                type: 'error',
+                duration: 2000
+              })
             }
             this.dialogDataList = true
+          }).catch((error) => {
+            console.log(error)
           })
         }
       })
@@ -305,6 +467,8 @@ export default {
           }
           _this.applyReason = ''
         }, 50)
+      }).catch((error) => {
+        console.log(error)
       })
     }
   }

@@ -12,9 +12,17 @@ export default {
     // countContractLogByContractName: [],
     contractLogListByDate: [],
     visited: false,
-    dataToPar: {}
+    dataToPar: {},
+    nodeAddr: '',
+    contractKey: ''
   },
   mutations: {
+    setContractKey: (state, contractKey) => {
+      state.contractKey = contractKey
+    },
+    setNodeAddr: (state, nodeAddr) => {
+      state.nodeAddr = nodeAddr
+    },
     setStartContract: (state, startContract) => {
       state.startContract = startContract
     },

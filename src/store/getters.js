@@ -12,6 +12,8 @@ const getters = {
   roles: state => state.user.roles,
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
-  startContract: state => state.dataShare.startContract
+  startContract: state => state.dataShare.startContract,
+  nodeAddr: state => state.dataShare.nodeAddr,
+  contractKey: state => state.dataShare.contractKey
 }
 export default getters

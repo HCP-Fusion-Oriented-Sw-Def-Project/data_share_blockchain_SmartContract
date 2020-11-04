@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-menu class="navbar" mode="horizontal">
+    <el-menu
+      class="navbar"
+      mode="horizontal"
+    >
       <hamburger
         id="hamburger-container"
         :is-active="sidebar.opened"
@@ -8,15 +11,24 @@
         @toggleClick="toggleSideBar"
       />
 
-      <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
+      <breadcrumb
+        id="breadcrumb-container"
+        class="breadcrumb-container"
+      />
 
       <div class="right-menu">
         <template v-if="device !== 'mobile'">
-          <search id="header-search" class="right-menu-item" />
+          <search
+            id="header-search"
+            class="right-menu-item"
+          />
 
           <!-- <error-log class="errLog-container right-menu-item hover-effect" /> -->
 
-          <screenfull id="screenfull" class="right-menu-item hover-effect" />
+          <screenfull
+            id="screenfull"
+            class="right-menu-item hover-effect"
+          />
 
           <el-tooltip
             :content="$t('navbar.size')"
@@ -37,7 +49,10 @@
           trigger="click"
         >
           <div class="avatar-wrapper">
-            <img :src="imageUrl" class="user-avatar" />
+            <img
+              :src="imageUrl"
+              class="user-avatar"
+            />
             <!-- https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80 -->
             <i class="el-icon-caret-bottom"></i>
           </div>
@@ -50,7 +65,7 @@
             <el-dropdown-item divided>
               <span
                 style="display:block;"
-                @click="dialogFormVisible = true"
+                @click="dialogFormVisible = true;getUserAllInfo()"
               >个人信息</span>
             </el-dropdown-item>
             <router-link to="/">
@@ -64,7 +79,10 @@
                 @click="dialogChangePassword = true"
               >修改密码</span>
             </el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">
+            <el-dropdown-item
+              divided
+              @click.native="logout"
+            >
               <span style="display:block;">{{ $t('navbar.logOut') }}</span>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -92,27 +110,53 @@
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <div slot="tip" class="el-upload__tip" style="margin-top:-20px">
+              <img
+                v-if="imageUrl"
+                :src="imageUrl"
+                class="avatar"
+              />
+              <i
+                v-else
+                class="el-icon-plus avatar-uploader-icon"
+              ></i>
+              <div
+                slot="tip"
+                class="el-upload__tip"
+                style="margin-top:-20px"
+              >
                 点击图片可更改头像
               </div>
             </el-upload>
           </el-form-item>
-          <el-form-item label="账号 :" style="margin-top:-10px">
+          <el-form-item
+            label="账号 :"
+            style="margin-top:-10px"
+          >
             {{ loginName }}
           </el-form-item>
-          <el-form-item label="姓名 :" prop="name">
-            <el-input v-model="userInfo.name" style="width:400px" />
+          <el-form-item
+            label="姓名 :"
+            prop="name"
+          >
+            <el-input
+              v-model="userInfo.name"
+              style="width:400px"
+            />
           </el-form-item>
-          <el-form-item label="邮箱 :" prop="email">
+          <el-form-item
+            label="邮箱 :"
+            prop="email"
+          >
             <el-input
               v-model="userInfo.email"
               style="width:400px"
               suffix-icon="el-icon-message"
             />
           </el-form-item>
-          <el-form-item label="电话 :" prop="phone">
+          <el-form-item
+            label="电话 :"
+            prop="phone"
+          >
             <el-input
               v-model="userInfo.phone"
               style="width:400px"
@@ -120,11 +164,17 @@
             />
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="handleUserInfo">
+          <el-button
+            type="primary"
+            @click="handleUserInfo"
+          >
             确认
           </el-button>
         </div>
@@ -143,18 +193,37 @@
           label-width="90px"
           style=" margin-left:50px;margin-right:50px;  "
         >
-          <el-form-item label="原密码 :" prop="old" style="margin-top:-10px">
-            <el-input v-model="password.old" style="width:400px" />
+          <el-form-item
+            label="原密码 :"
+            prop="old"
+            style="margin-top:-10px"
+          >
+            <el-input
+              v-model="password.old"
+              style="width:400px"
+            />
           </el-form-item>
-          <el-form-item label="新密码 :" prop="new">
-            <el-input v-model="password.new" style="width:400px" />
+          <el-form-item
+            label="新密码 :"
+            prop="new"
+          >
+            <el-input
+              v-model="password.new"
+              style="width:400px"
+            />
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="dialogChangePassword = false">
             取消
           </el-button>
-          <el-button type="primary" @click="handlePasswordChange">
+          <el-button
+            type="primary"
+            @click="handlePasswordChange"
+          >
             确认
           </el-button>
         </div>
@@ -188,7 +257,7 @@ export default {
   data() {
     return {
       dialogChangePassword: false,
-      userInfo: [],
+      userInfo: {},
       dialogFormVisible: false,
       loginName: '',
       temp: {
@@ -254,12 +323,13 @@ export default {
     // }
   },
   methods: {
-    getImage() {},
+    getImage() { },
     getUserAllInfo() {
       getUserInfo().then(response => {
         console.log(response.data)
         this.loginName = response.data.loginName
         this.userInfo = response.data
+        // Vue.set()
         // this.imageUrl = 'http://10.4.20.100:7979/spark/hdfs/downloadFile?filePath=' + this.temp.photo
         // this.password.oldPassword = response.data.password
       })
@@ -315,8 +385,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+            this.getUserAllInfo()
           })
-          this.getUserAllInfo()
           // this.changePhoto()
         }
       })

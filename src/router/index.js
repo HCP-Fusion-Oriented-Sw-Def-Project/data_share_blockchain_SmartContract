@@ -47,6 +47,11 @@ export const constantRoutes = [{
   hidden: true,
 },
 {
+  path: '/login_bit',
+  component: () => import('@/views/login/index_to_bd'),
+  hidden: true,
+},
+{
   path: '/auth-redirect',
   component: () => import('@/views/login/auth-redirect'),
   hidden: true,

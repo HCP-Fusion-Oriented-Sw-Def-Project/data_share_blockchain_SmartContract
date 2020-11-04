@@ -357,8 +357,10 @@ var displayOutput = function(obj) {
 }
 
 var initWSocket = function() {
-  var host = '39.106.6.6:1730'
-  console.log(typeof host)
+  var host = '39.104.201.40:21030'
+  console.log(store.getters.nodeAddr)
+  if (store.getters.nodeAddr !== undefined && store.getters.nodeAddr !== '')
+    host = store.getters.nodeAddr
   if (!host.startsWith('ws')) {
     host = 'ws://' + host
   }
@@ -395,6 +397,10 @@ var onGetNodeSessionID = function(data) {
   global.session = data.session
   var loginParam = {}
   var res = store.getters.pubKey.split(",")
+  if (store.getters.contractKey !== '' && store.getters.contractKey !== undefined) {
+    console.log(store.getters.contractKey)
+    res = store.getters.contractKey.split(",")
+  }
   loginParam.pubKey = res[0]
   // loginParam.pubKey = global.sm2Key.publicKey
   // loginParam.pubKey =
@@ -674,36 +680,36 @@ var onListPersonalProjects = function(data) {
 }
 var onListContractProcess = function(data) {
   // store.getters.startContract = JSON.parse(data.data)
-  console.log('onListContractProcess')
-  console.log(JSON.parse(data.data))
-  store.commit('setContractProcessList', JSON.parse(data.data))
-  $('#selectContract').html('')
-  global.contracts = JSON.parse(data.data)
-  $('#selectContract').append("<option value='-1'>选择合约</option>")
-  var selectValue = -1
-  for (var i = 0; i < global.contracts.length; i++) {
-    if (global.contracts[i].id == undefined)
-      global.contracts[i].id = global.contracts[i].contractID
-    if (global.contracts[i].name == undefined)
-      global.contracts[i].name = global.contracts[i].contractName
+  // console.log('onListContractProcess')
+  // console.log(JSON.parse(data.data))
+  // store.commit('setContractProcessList', JSON.parse(data.data))
+  // $('#selectContract').html('')
+  // global.contracts = JSON.parse(data.data)
+  // $('#selectContract').append("<option value='-1'>选择合约</option>")
+  // var selectValue = -1
+  // for (var i = 0; i < global.contracts.length; i++) {
+  //   if (global.contracts[i].id == undefined)
+  //     global.contracts[i].id = global.contracts[i].contractID
+  //   if (global.contracts[i].name == undefined)
+  //     global.contracts[i].name = global.contracts[i].contractName
 
-    $('#selectContract').append(
-      "<option value='" + i + "'>" + global.contracts[i].name + '</option>'
-    )
-    if (global.urlparam['contract'] != undefined) {
-      if (
-        global.urlparam['contract'] == global.contracts[i].name ||
-        global.urlparam['contract'] == global.contracts[i].id
-      ) {
-        selectValue = i
-      }
-    }
-  }
-  if ($('#selectContract')[0] != undefined)
-    $('#selectContract')[0].value = selectValue
-  if (global.urlparam['contract'] != undefined) {
-    changeApp()
-  }
+  //   $('#selectContract').append(
+  //     "<option value='" + i + "'>" + global.contracts[i].name + '</option>'
+  //   )
+  //   if (global.urlparam['contract'] != undefined) {
+  //     if (
+  //       global.urlparam['contract'] == global.contracts[i].name ||
+  //       global.urlparam['contract'] == global.contracts[i].id
+  //     ) {
+  //       selectValue = i
+  //     }
+  //   }
+  // }
+  // if ($('#selectContract')[0] != undefined)
+  //   $('#selectContract')[0].value = selectValue
+  // if (global.urlparam['contract'] != undefined) {
+  //   changeApp()
+  // }
 }
 
 var onListLocalNodeLog = function(data) {
@@ -856,3 +862,8 @@ var changeRender = function() {
 }
 
 init()
+
+export {
+  initWSocket,
+  init
+}

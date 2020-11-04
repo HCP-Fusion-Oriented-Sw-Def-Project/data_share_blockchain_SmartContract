@@ -14,7 +14,7 @@ NProgress.configure({
   showSpinner: false
 }) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/login_bit'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -27,7 +27,9 @@ router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
-    if (to.path === '/login') {
+    if (to.path === '/jump') {
+      window.location.href = 'http://www.baidu.com'
+    } else if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({
         path: '/'
@@ -36,12 +38,10 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      console.log(hasRoles, store.getters.pubKey)
       if (hasRoles) {
         next()
       } else {
         try {
-          console.log('inrole')
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           const {
@@ -78,6 +78,7 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
+      // next('/login')
       NProgress.done()
     }
   }
