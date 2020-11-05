@@ -298,14 +298,13 @@
 </template>
 
 <script>
-// import '@/utils/wsCluster.js'
+import { loginBaas, getList } from '@/api/dataList'
 import { initWSocket } from '@/utils/wsCluster'
 import { addAlgoTask, modifyAlgoTask } from '@/api/algoTask'
 import { getParameter } from '@/api/algoParameter'
 export default {
   data() {
     var validateName = (rule, value, callback) => {
-      console.log(value)
       if (value === '' || value === undefined) {
         this.disabledClick = true
         callback(new Error('请输入算法作业名称'))
@@ -315,7 +314,6 @@ export default {
       }
     }
     var validateAlgo = (rule, value, callback) => {
-      console.log(value, this.flag)
       if ((value === '' || value === undefined) && this.flag === 1) {
         this.disabledClick = true
         callback(new Error('请选择算法'))
@@ -328,7 +326,6 @@ export default {
       }
     }
     var validateDataSource = (rule, value, callback) => {
-      console.log(value, this.flag, this.algorProcess.datasource)
       if ((value === '' || value === undefined) && this.flag === 2) {
         this.disabledClick = true
         callback(new Error('请选择数据源'))
@@ -466,22 +463,64 @@ export default {
       this.listQuery.rows = 5
       this.listQuery.pages = 1
       var _this = this
-      window.executeContract('AccessControlCollector', 'getDataList', this.$store.state.user.pubKey.split(',')[0], (res) => {
-        console.log(res)
-        var temp = JSON.parse(res.result)
-        for (const v of temp) {
-          for (const i of _this.$store.state.dataShare.contractProcessList) {
-            if (String(v) === i.id) {
-              _this.dataSourceList.push({
-                name: i.name,
-                owner: i.id,
-                path: '/blockchain/dataset'
-              })
+      // loginBaas().then((res) => {
+      //   console.log(res.headers.get('authorization'))
+      //   var token = res.headers.get('authorization')
+      //   getList(token).then((res1) => {
+      //     console.log(res1)
+      //   })
+      // })
+      new Promise((resolve, reject) => {
+        loginBaas().then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            var token = res.headers.get('authorization')
+            resolve(token)
+          } else {
+            reject()
+          }
+        })
+      }).then(function(token) {
+        return new Promise((resolve, reject) => {
+          getList(token).then((res1) => {
+            if (res1.code === 20000) {
+              resolve(res1)
+            } else {
+              reject()
+            }
+          })
+        })
+      }).then(function(result) {
+        return new Promise((resolve, reject) => {
+          var data = result.data.data
+          console.log(result)
+          var tempData = []
+          // data为内部变量都是对象,用in访问
+          for (const v in data) {
+            for (const i of data[v].contracts) {
+              tempData.push(i)
             }
           }
-        }
-        _this.total = _this.dataSourceList.length
+          window.executeContract('AccessControlCollector', 'getDataList', _this.$store.state.user.pubKey.split(',')[0], (res) => {
+            var temp = JSON.parse(res.result)
+            for (const v of temp) {
+              for (const i of tempData) {
+                if (String(v) === i.contractID) {
+                  _this.dataSourceList.push({
+                    name: i.contractName,
+                    owner: i.contractID,
+                    path: '/blockchain/dataset'
+                  })
+                }
+              }
+            }
+            _this.total = _this.dataSourceList.length
+          })
+        })
       })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     // 获得参数列表
     getParametersList() {

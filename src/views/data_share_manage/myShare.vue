@@ -639,7 +639,9 @@ export default {
               fileType: tempData.dataType,
               shareType: tempData.shareType,
               discription: tempData.shareDescription,
-              dataTable: tempData.dataTable
+              dataTable: tempData.dataTable,
+              dataLink: tempData.dataSourceUrl,
+              dataPassword: '****'
             },
             tableData: res.data.data.dataShareInfoFieldList,
             isAllEdited: false,
@@ -881,21 +883,23 @@ export default {
             }).then(function() {
               // 启动合约
               return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  window.startContract(obj.basicInfo.name)
-                  _this.$store.commit('setContractKey', '')
-                  _this.$store.commit('setNodeAddr', '')
-                  resolve()
-                }, 8000)
-              })
-            }).then(function() {
-              return new Promise((resolve, reject) => {
-                window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                window.startContract(obj.basicInfo.name)
                 resolve()
               })
-            }).catch((error) => {
-              console.log(error)
             })
+              .then(function() {
+                return new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                    _this.$store.commit('setContractKey', '')
+                    _this.$store.commit('setNodeAddr', '')
+                    resolve()
+                  }, 7000)
+                })
+              })
+              .catch((error) => {
+                console.log(error)
+              })
             // addDataShareInfoBase(tempData).then((res) => {
             //   if (res.data.code === 20000) {
             //     this.$notify({
