@@ -676,8 +676,8 @@ export default {
             type: 'success',
             duration: 2000
           })
+          window.killContractProcess(row.name)
           setTimeout(() => {
-            window.killContractProcess(row.name)
             window.deleteFile(row.name)
           }, 5000)
           this.$store.commit('setContractKey', '')
@@ -883,8 +883,10 @@ export default {
             }).then(function() {
               // 启动合约
               return new Promise((resolve, reject) => {
-                window.startContract(obj.basicInfo.name)
-                resolve()
+                setTimeout(() => {
+                  window.startContract(obj.basicInfo.name)
+                  resolve()
+                }, 2000)
               })
             })
               .then(function() {

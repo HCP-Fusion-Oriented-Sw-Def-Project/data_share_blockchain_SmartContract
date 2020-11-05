@@ -501,8 +501,11 @@ export default {
               tempData.push(i)
             }
           }
+          _this.$store.commit('setContractKey', '')
+          _this.$store.commit('setNodeAddr', '')
           window.executeContract('AccessControlCollector', 'getDataList', _this.$store.state.user.pubKey.split(',')[0], (res) => {
             var temp = JSON.parse(res.result)
+            console.log(temp)
             for (const v of temp) {
               for (const i of tempData) {
                 if (String(v) === i.contractID) {
