@@ -106,7 +106,6 @@
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from '@/views/data_share_manage/edit-share'
 import '@/utils/wsCluster.js'
-import { getDataShareInfoBase } from '@/api/dataShare'
 import { loginBaas, getList } from '@/api/dataList'
 
 export default {
@@ -180,7 +179,6 @@ export default {
           var tempData = []
           // data为内部变量都是对象,用in访问
           for (const v in data) {
-            
             for (const i of data[v].contracts) {
               tempData.push(i)
             }
@@ -204,23 +202,6 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-
-      // window.executeContract('AccessControlCollector', 'getDataList', this.$store.state.user.pubKey.split(',')[0], (res) => {
-      //   var temp = JSON.parse(res.result)
-      //   let tempData = []
-      //   for (const v of temp) {
-      //     for (const i of this.$store.state.dataShare.contractProcessList) {
-      //       if (v === parseInt(i.id)) {
-      //         tempData.push(i.name)
-      //       }
-      //     }
-      //   }
-
-      //   getDataShareInfoBase(tempData.join(',')).then((res) => {
-      //     _this.dataList = res.data.data
-      //     _this.listLoading = false
-      //   })
-      // })
     },
     handleApply(row) {
       // setTimeout(() => {
@@ -250,12 +231,12 @@ export default {
     },
     useData(row) {
       this.$router.push({
-        name: "single_vis_new",
+        name: 'single_vis_new',
         params: {
-          type: "contract",
+          type: 'contract',
           contractName: row.contractName
         }
-      });
+      })
     }
   }
 }

@@ -497,7 +497,6 @@ export default {
           var tempData = []
           // data为内部变量都是对象,用in访问
           for (const v in data) {
-            
             for (const i of data[v].contracts) {
               tempData.push(i)
             }

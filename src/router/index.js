@@ -410,64 +410,64 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    path: '/nanning',
-    component: Layout,
-    redirect: 'noredirect',
-    name: 'nanning',
-    meta: {
-      title: '广西省南宁市数据统计',
-      icon: 'component',
-      noCache: true,
-      roles: ['admin', 'dataUser']
-    },
-    children: [
-      {
-        path: 'industry_insurance_analysis',
-        component: () => import('@/views/nanning/industry_insurance_analysis'),
-        name: 'IndustryInsuranceAnalysis',
-        meta: {
-          title: '各产业营业收入分析',
-          icon: 'form',
-          noCache: true,
-          roles: ['admin', 'dataUser']
-        }
-      },
-      {
-        path: 'region_insurance_analysis',
-        component: () => import('@/views/nanning/region_insurance_analysis'),
-        name: 'RegionInsuranceAnalysis',
-        meta: {
-          title: '各区域营业收入分析',
-          icon: 'form',
-          noCache: true,
-          roles: ['admin', 'dataUser']
-        }
-      },
-      {
-        path: 'industry',
-        component: () => import('@/views/nanning/industry'),
-        name: 'Industry',
-        meta: {
-          title: '产业列表统计',
-          icon: 'form',
-          noCache: true,
-          roles: ['admin', 'dataUser']
-        }
-      },
-      {
-        path: 'industry_warning',
-        component: () => import('@/views/nanning/industry_warning'),
-        name: 'IndustryWarning',
-        meta: {
-          title: '产业预警',
-          icon: 'form',
-          noCache: true,
-          roles: ['admin', 'dataUser']
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/nanning',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   name: 'nanning',
+  //   meta: {
+  //     title: '广西省南宁市数据统计',
+  //     icon: 'component',
+  //     noCache: true,
+  //     roles: ['admin', 'dataUser']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'industry_insurance_analysis',
+  //       component: () => import('@/views/nanning/industry_insurance_analysis'),
+  //       name: 'IndustryInsuranceAnalysis',
+  //       meta: {
+  //         title: '各产业营业收入分析',
+  //         icon: 'form',
+  //         noCache: true,
+  //         roles: ['admin', 'dataUser']
+  //       }
+  //     },
+  //     {
+  //       path: 'region_insurance_analysis',
+  //       component: () => import('@/views/nanning/region_insurance_analysis'),
+  //       name: 'RegionInsuranceAnalysis',
+  //       meta: {
+  //         title: '各区域营业收入分析',
+  //         icon: 'form',
+  //         noCache: true,
+  //         roles: ['admin', 'dataUser']
+  //       }
+  //     },
+  //     {
+  //       path: 'industry',
+  //       component: () => import('@/views/nanning/industry'),
+  //       name: 'Industry',
+  //       meta: {
+  //         title: '产业列表统计',
+  //         icon: 'form',
+  //         noCache: true,
+  //         roles: ['admin', 'dataUser']
+  //       }
+  //     },
+  //     {
+  //       path: 'industry_warning',
+  //       component: () => import('@/views/nanning/industry_warning'),
+  //       name: 'IndustryWarning',
+  //       meta: {
+  //         title: '产业预警',
+  //         icon: 'form',
+  //         noCache: true,
+  //         roles: ['admin', 'dataUser']
+  //       }
+  //     }
+  //   ]
+  // },
   /** when your routing map is too long, you can split it into small modules **/
   // {
   //   path: '/example',

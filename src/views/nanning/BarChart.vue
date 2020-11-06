@@ -7,7 +7,14 @@
   import echarts from 'echarts' // 引入echarts
   export default {
   name: 'Echarts',
-    props: ['options'],
+    props: {
+      options: {
+        type: Object,
+        default: () => {
+          return {}
+        }
+      }
+    },
     data() {
         return {
             myChart: {}

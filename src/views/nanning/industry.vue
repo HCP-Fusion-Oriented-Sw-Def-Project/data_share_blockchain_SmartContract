@@ -26,7 +26,7 @@
       style="width: 100%;"
       :height="tableHeight"
     >
-      <el-table-column v-for="column in columns" sortable :label="column" prop="industry" align="center">
+      <el-table-column v-for="(column, index) in columns" :key="index+''" sortable :label="column" prop="industry" align="center">
         <template slot-scope="scope">
           <span> {{ scope.row[column] }} </span>
         </template>
