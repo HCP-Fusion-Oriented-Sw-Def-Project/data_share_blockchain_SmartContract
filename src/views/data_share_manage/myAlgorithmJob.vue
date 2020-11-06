@@ -8,27 +8,8 @@
         placeholder="算法作业名称"
         @keyup.enter.native="handleFilter"
       />
-      <div style="float:right">
-        <el-button
-          v-waves
-          class="filter-item"
-          type="primary"
-          icon="el-icon-search"
-          @click="handleFilter"
-        >
-          查找
-        </el-button>
-        <el-button
-          v-waves
-          class="filter-item"
-          type="info"
-          icon="el-icon-refresh"
-          @click="resetListQuery"
-        >
-          重置
-        </el-button>
-      </div>
-      <div style="margin-bottom: 10px;margin-top: 0px">
+
+      <div style="margin-bottom: 5px;margin-top: 0px">
         <el-button
           size="small"
           type="primary"
@@ -44,6 +25,28 @@
         >
           <svg-icon icon-class="delete" />批量删除
         </el-button>
+        <div style="float:right">
+          <el-button
+            v-waves
+            class="filter-item"
+            type="primary"
+            size="small"
+            icon="el-icon-search"
+            @click="handleFilter"
+          >
+            查找
+          </el-button>
+          <el-button
+            v-waves
+            class="filter-item"
+            type="info"
+            size="small"
+            icon="el-icon-refresh"
+            @click="resetListQuery"
+          >
+            重置
+          </el-button>
+        </div>
       </div>
     </div>
     <el-table
@@ -56,7 +59,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%; margin-top:10px;"
+      style="width: 100%; "
       :height="fullHeight-300"
       @selection-change="handleBatchSelect"
     >
@@ -286,7 +289,7 @@ export default {
     }
   },
   created() {
-    this.$store.commit('setContractKey', '04wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setContractKey', '04421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
     this.$store.commit('setNodeAddr', '39.104.208.148:21030')
     setTimeout(() => {
       this.getAlgorList()

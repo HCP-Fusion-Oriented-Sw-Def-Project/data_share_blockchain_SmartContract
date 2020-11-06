@@ -46,21 +46,26 @@
         <el-table-column align="center" label width="65" type="index" />
         <el-table-column align="center" label="名称" width="150px">
           <template slot-scope="scope">
-            <span>{{ scope.row.dataName }}</span>
+            <span>{{ scope.row.contractName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="合约ID" width="150px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.contractID }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="所属类别" width="150px">
           <template slot-scope="scope">
-            <span>{{ scope.row.typeId }}</span>
+            <span>{{ scope.row.type }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="访问权限" width="100">
+        <!-- <el-table-column align="center" label="访问权限" width="100">
           <template slot-scope="scope">
             <span v-if="scope.row.accessRight == '1'">无条件访问</span>
             <span v-if="scope.row.accessRight == '2'">申请后访问</span>
             <span v-if="scope.row.accessRight == '3'">可申请访问但禁止查看详情</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           align="center"
           label="操作"
@@ -102,6 +107,7 @@ import waves from '@/directive/waves' // 水波纹指令
 import editShare from '@/views/data_share_manage/edit-share'
 import '@/utils/wsCluster.js'
 import { getDataShareInfoBase } from '@/api/dataShare'
+import { loginBaas, getList } from '@/api/dataList'
 
 export default {
   name: 'DataList',
@@ -147,22 +153,74 @@ export default {
       var _this = this
 
       this.dataList = []
-      window.executeContract('AccessControlCollector', 'getDataList', this.$store.state.user.pubKey.split(',')[0], (res) => {
-        var temp = JSON.parse(res.result)
-        let tempData = []
-        for (const v of temp) {
-          for (const i of this.$store.state.dataShare.contractProcessList) {
-            if (v === parseInt(i.id)) {
-              tempData.push(i.name)
+      _this.listLoading = true
+      new Promise((resolve, reject) => {
+        loginBaas().then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            var token = res.headers.get('authorization')
+            resolve(token)
+          } else {
+            reject()
+          }
+        })
+      }).then(function(token) {
+        return new Promise((resolve, reject) => {
+          getList(token).then((res1) => {
+            if (res1.code === 20000) {
+              resolve(res1)
+            } else {
+              reject()
+            }
+          })
+        })
+      }).then(function(result) {
+        return new Promise((resolve, reject) => {
+          var data = result.data.data
+          var tempData = []
+          // data为内部变量都是对象,用in访问
+          for (const v in data) {
+            
+            for (const i of data[v].contracts) {
+              tempData.push(i)
             }
           }
-        }
-
-        getDataShareInfoBase(tempData.join(',')).then((res) => {
-          _this.dataList = res.data.data
-          _this.listLoading = false
+          _this.$store.commit('setContractKey', '')
+          _this.$store.commit('setNodeAddr', '')
+          window.executeContract('AccessControlCollector', 'getDataList', _this.$store.state.user.pubKey.split(',')[0], (res) => {
+            var temp = JSON.parse(res.result)
+            for (const v of temp) {
+              for (const i of tempData) {
+                if (String(v) === i.contractID) {
+                  _this.dataList.push(i)
+                }
+              }
+            }
+            // _this.total = _this.dataSourceList.length
+            _this.listLoading = false
+          })
         })
       })
+        .catch((error) => {
+          console.log(error)
+        })
+
+      // window.executeContract('AccessControlCollector', 'getDataList', this.$store.state.user.pubKey.split(',')[0], (res) => {
+      //   var temp = JSON.parse(res.result)
+      //   let tempData = []
+      //   for (const v of temp) {
+      //     for (const i of this.$store.state.dataShare.contractProcessList) {
+      //       if (v === parseInt(i.id)) {
+      //         tempData.push(i.name)
+      //       }
+      //     }
+      //   }
+
+      //   getDataShareInfoBase(tempData.join(',')).then((res) => {
+      //     _this.dataList = res.data.data
+      //     _this.listLoading = false
+      //   })
+      // })
     },
     handleApply(row) {
       // setTimeout(() => {
@@ -195,7 +253,7 @@ export default {
         name: "single_vis_new",
         params: {
           type: "contract",
-          contractName: row.dataName
+          contractName: row.contractName
         }
       });
     }

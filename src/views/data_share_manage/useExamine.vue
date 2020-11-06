@@ -263,6 +263,7 @@ export default {
         useDescription: row.instructions,
         auditStatus: '3'
       }
+      console.log(row)
       getJudgeAccess(tempData).then((res) => {
         console.log(res)
         window.executeContract(row.name, 'accept', row.pubkey, (res) => {

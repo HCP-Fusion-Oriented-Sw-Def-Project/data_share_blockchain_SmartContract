@@ -17,7 +17,10 @@
                 :inline="true"
               >
                 <el-col :span="10">
-                  <el-form-item label="所属分类:" prop="type">
+                  <el-form-item
+                    label="所属分类:"
+                    prop="type"
+                  >
                     <el-input
                       v-model="basicInfo.type"
                       class="filter-item"
@@ -26,7 +29,10 @@
                       @focus="typeVisible = true"
                     />
                   </el-form-item>
-                  <el-form-item label="资源名称:" prop="name">
+                  <el-form-item
+                    label="资源名称:"
+                    prop="name"
+                  >
                     <el-input
                       v-model="basicInfo.name"
                       class="filter-item"
@@ -35,7 +41,10 @@
                       placeholder="请输入合约名"
                     />
                   </el-form-item>
-                  <el-form-item label="资源描述:" style="height:25px; ">
+                  <el-form-item
+                    label="资源描述:"
+                    style="height:25px; "
+                  >
                     <el-input
                       v-model="basicInfo.discription"
                       type="textarea"
@@ -60,7 +69,10 @@
                       :disabled="isAllEdited"
                     />
                   </el-form-item>
-                  <el-form-item label="所属行业:" prop="work">
+                  <el-form-item
+                    label="所属行业:"
+                    prop="work"
+                  >
                     <el-select
                       v-model="basicInfo.work"
                       class="filter-item"
@@ -75,7 +87,10 @@
                       />
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="更新周期:" prop="cyc">
+                  <el-form-item
+                    label="更新周期:"
+                    prop="cyc"
+                  >
                     <el-select
                       v-model="basicInfo.cyc"
                       class="filter-item"
@@ -110,7 +125,10 @@
             :inline="true"
           >
             <el-col :span="10">
-              <el-form-item label="访问权限:" prop="permiss">
+              <el-form-item
+                label="访问权限:"
+                prop="permiss"
+              >
                 <el-select
                   v-model="shareControl.permiss"
                   class="filter-item"
@@ -125,7 +143,10 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="共享类型:" prop="shareType">
+              <el-form-item
+                label="共享类型:"
+                prop="shareType"
+              >
                 <el-select
                   v-model="shareControl.shareType"
                   class="filter-item"
@@ -140,7 +161,10 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="社会公开:" prop="public">
+              <el-form-item
+                label="社会公开:"
+                prop="public"
+              >
                 <el-select
                   v-model="shareControl.public"
                   class="filter-item"
@@ -155,7 +179,10 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="默认授权使用:" prop="defaultPermiss">
+              <el-form-item
+                label="默认授权使用:"
+                prop="defaultPermiss"
+              >
                 <el-select
                   v-model="shareControl.defaultPermiss"
                   class="filter-item"
@@ -170,7 +197,11 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="共享说明:" prop="discription" style="height:25px; ">
+              <el-form-item
+                label="共享说明:"
+                prop="discription"
+                style="height:25px; "
+              >
                 <el-input
                   v-model="shareControl.discription"
                   type="textarea"
@@ -179,7 +210,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="接入文件类型:" prop="fileType">
+              <el-form-item
+                label="接入文件类型:"
+                prop="fileType"
+              >
                 <el-select
                   v-model="shareControl.fileType"
                   class="filter-item"
@@ -196,7 +230,10 @@
                 </el-select>
               </el-form-item>
               <div v-if="shareControl.fileType ==='1' && !isAllEdited">
-                <el-form-item label="数据库链接:" style="margin-left:-1px;">
+                <el-form-item
+                  label="数据库链接:"
+                  style="margin-left:-1px;"
+                >
                   <el-input
                     v-model="shareControl.dataLink"
                     size="small"
@@ -217,7 +254,10 @@
                   />
                 </el-form-item>
                 <!-- <div v-if="isAllEdited"> -->
-                <el-form-item v-if="!isAllEdited" label="数据库密码:">
+                <el-form-item
+                  v-if="!isAllEdited"
+                  label="数据库密码:"
+                >
                   <el-input
                     v-model="shareControl.dataPassword"
                     class="filter-item"
@@ -269,7 +309,10 @@
                     >
                       点击上传
                     </el-button>
-                    <div slot="tip" class="el-upload__tip">
+                    <div
+                      slot="tip"
+                      class="el-upload__tip"
+                    >
                       只能上传csv/txt/excel文件，且不超过1M
                     </div>
                   </el-upload>
@@ -279,7 +322,10 @@
           </el-form>
         </div>
         <div class="addParam">
-          <div v-if="tableVisible && !isPartEdited" style="float: left;">
+          <div
+            v-if="tableVisible && !isPartEdited"
+            style="float: left;"
+          >
             <span style="font-size:15px; font-weight:bold;margin-right:10px;">共享字段:</span>
             <el-button
               icon="el-icon-plus"
@@ -292,8 +338,15 @@
           </div>
         </div>
 
-        <div v-if="tableVisible" class="tableShow">
-          <el-form ref="tableForm" :model="formTable" :rules="formTable.tableRules">
+        <div
+          v-if="tableVisible"
+          class="tableShow"
+        >
+          <el-form
+            ref="tableForm"
+            :model="formTable"
+            :rules="formTable.tableRules"
+          >
             <el-table
               :data="formTable.tableData"
               border
@@ -302,30 +355,53 @@
               style="width: 100%"
               :height="fullHeight-330"
             >
-              <el-table-column label="序号" type="index" width="50" align="center" />
-              <el-table-column label="字段名称" width="120" align="center">
+              <el-table-column
+                label="序号"
+                type="index"
+                width="50"
+                align="center"
+              />
+              <el-table-column
+                label="字段名称"
+                width="120"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.chineseName'"
                     :rules="tableRules.chineseName"
                     style="height:33px;"
                   >
-                    <el-input v-model="scope.row.chineseName" :disabled="isAllEdited" />
+                    <el-input
+                      v-model="scope.row.chineseName"
+                      :disabled="isAllEdited"
+                    />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="英文编码" width="120" align="center">
+              <el-table-column
+                label="英文编码"
+                width="120"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.englishName'"
                     :rules="tableRules.englishName"
                     style="height:33px;"
                   >
-                    <el-input v-model="scope.row.englishName" :disabled="isAllEdited" />
+                    <el-input
+                      v-model="scope.row.englishName"
+                      :disabled="isAllEdited"
+                    />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="字段类型" width="140" align="center">
+              <el-table-column
+                label="字段类型"
+                width="140"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.fieldType'"
@@ -348,29 +424,47 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="关键字" width="120" align="center">
+              <el-table-column
+                label="关键字"
+                width="120"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.key'"
                     :rules="tableRules.keyword"
                     style="height:33px;"
                   >
-                    <el-input v-model="scope.row.keyword" :disabled="isAllEdited" />
+                    <el-input
+                      v-model="scope.row.keyword"
+                      :disabled="isAllEdited"
+                    />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="字段描述" width="200" align="center">
+              <el-table-column
+                label="字段描述"
+                width="200"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.discription'"
                     :rules="tableRules.discription"
                     style="height:33px;"
                   >
-                    <el-input v-model="scope.row.discription" :disabled="isAllEdited" />
+                    <el-input
+                      v-model="scope.row.discription"
+                      :disabled="isAllEdited"
+                    />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="访问权限" width="140" align="center">
+              <el-table-column
+                label="访问权限"
+                width="140"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-form-item
                     :prop="'tableData.' + scope.$index +'.accessRight'"
@@ -403,7 +497,11 @@
                   <span>{{ scope.row.referenceField }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="170" align="center">
+              <el-table-column
+                label="操作"
+                width="170"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <el-button
                     type="primary"
@@ -414,7 +512,11 @@
                   >
                     关联
                   </el-button>
-                  <el-popover placement="top" width="160" trigger="click">
+                  <el-popover
+                    placement="top"
+                    width="160"
+                    trigger="click"
+                  >
                     <p>确定删除吗？</p>
                     <div style="text-align: right; margin: 0">
                       <el-button
@@ -469,11 +571,17 @@
         style="width:360px"
         @node-click="handleNodeClick"
       />
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="typeVisible = false">
           取 消
         </el-button>
-        <el-button type="primary" @click="typeVisible = false">
+        <el-button
+          type="primary"
+          @click="typeVisible = false"
+        >
           确 定
         </el-button>
       </div>
@@ -494,23 +602,44 @@
         style="width: 80%"
         :height="fullHeight-200"
       >
-        <el-table-column label="序号" type="index" width="50" align="center" />
-        <el-table-column label="字段名称" width="120" align="center">
+        <el-table-column
+          label="序号"
+          type="index"
+          width="50"
+          align="center"
+        />
+        <el-table-column
+          label="字段名称"
+          width="120"
+          align="center"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="字段类型" width="140" align="center">
+        <el-table-column
+          label="字段类型"
+          width="140"
+          align="center"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.type }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="相关术语" width="180" align="center">
+        <el-table-column
+          label="相关术语"
+          width="180"
+          align="center"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.discription }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="96" align="center">
+        <el-table-column
+          label="操作"
+          width="96"
+          align="center"
+        >
           <template slot-scope="scope">
             <el-button
               type="primary"
@@ -523,11 +652,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="relateDialog = false">
           取 消
         </el-button>
-        <el-button type="primary" @click="relateDialog = false">
+        <el-button
+          type="primary"
+          @click="relateDialog = false"
+        >
           确 定
         </el-button>
       </div>

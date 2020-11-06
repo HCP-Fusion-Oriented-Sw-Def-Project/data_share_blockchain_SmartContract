@@ -639,7 +639,9 @@ export default {
               fileType: tempData.dataType,
               shareType: tempData.shareType,
               discription: tempData.shareDescription,
-              dataTable: tempData.dataTable
+              dataTable: tempData.dataTable,
+              dataLink: tempData.dataSourceUrl,
+              dataPassword: '****'
             },
             tableData: res.data.data.dataShareInfoFieldList,
             isAllEdited: false,
@@ -674,8 +676,8 @@ export default {
             type: 'success',
             duration: 2000
           })
+          window.killContractProcess(row.name)
           setTimeout(() => {
-            window.killContractProcess(row.name)
             window.deleteFile(row.name)
           }, 5000)
           this.$store.commit('setContractKey', '')
@@ -883,19 +885,23 @@ export default {
               return new Promise((resolve, reject) => {
                 setTimeout(() => {
                   window.startContract(obj.basicInfo.name)
-                  _this.$store.commit('setContractKey', '')
-                  _this.$store.commit('setNodeAddr', '')
                   resolve()
-                }, 8000)
+                }, 2000)
               })
-            }).then(function() {
-              return new Promise((resolve, reject) => {
-                window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
-                resolve()
-              })
-            }).catch((error) => {
-              console.log(error)
             })
+              .then(function() {
+                return new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                    _this.$store.commit('setContractKey', '')
+                    _this.$store.commit('setNodeAddr', '')
+                    resolve()
+                  }, 7000)
+                })
+              })
+              .catch((error) => {
+                console.log(error)
+              })
             // addDataShareInfoBase(tempData).then((res) => {
             //   if (res.data.code === 20000) {
             //     this.$notify({

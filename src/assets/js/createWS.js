@@ -196,8 +196,8 @@ window.executeContract = function(contractID, method, strarg, cb) {
   request.requestID = new Date().getTime() + "_" +
     Math.floor(Math.random() * 10000);
   var res = store.getters.pubKey.split(",")
-  // if (store.getters.contractKey !== '' && store.getters.contractKey !== undefined)
-  //   res = store.getters.contractKey.split(",")
+  if (store.getters.contractKey !== '' && store.getters.contractKey !== undefined)
+    res = store.getters.contractKey.split(",")
   global.cbs[request.requestID] = cb;
   request.contractID = contractID;
   request.operation = method;
