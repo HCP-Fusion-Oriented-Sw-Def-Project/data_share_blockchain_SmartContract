@@ -1060,16 +1060,18 @@ export default {
               return new Promise((resolve, reject) => {
                 setTimeout(() => {
                   window.startContract(obj.basicInfo.name)
-                  _this.$store.commit('setContractKey', '')
-                  _this.$store.commit('setNodeAddr', '')
                   resolve()
-                }, 8000)
+                }, 2000)
               })
             }).then(function() {
               return new Promise((resolve, reject) => {
                 // 更改新生成的合约的公钥
-                window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
-                resolve()
+                setTimeout(() => {
+                  window.executeContract(obj.basicInfo.name, 'changeOwner', _this.$store.state.user.pubKey.split(',')[0])
+                  _this.$store.commit('setContractKey', '')
+                  _this.$store.commit('setNodeAddr', '')
+                  resolve()
+                }, 7000)
               })
             }).catch((error) => {
               console.log(error)
