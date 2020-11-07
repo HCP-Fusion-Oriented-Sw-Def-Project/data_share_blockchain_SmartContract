@@ -12,7 +12,7 @@ import {
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API + '/share', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  baseURL: process.env.VUE_APP_BASE_API2 + ':7979/share', // api的base_url, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API2 + '/share', // api的base_url, // url = base url + request url
   // baseURL: 'http://152.136.214.48:7979/share', // api的base_url, // url = base url + request url
   timeout: 5000 // request timeout
 })

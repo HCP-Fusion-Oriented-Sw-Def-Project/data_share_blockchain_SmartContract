@@ -606,12 +606,12 @@ export default {
       getMyShareParam(row.id).then((res) => {
         console.log(res)
         if (res.data.code === 20000) {
-          this.$notify({
-            title: '修改成功',
-            message: res.data.message,
-            type: 'success',
-            duration: 2000
-          })
+          // this.$notify({
+          //   title: '修改成功',
+          //   message: res.data.message,
+          //   type: 'success',
+          //   duration: 2000
+          // })
           let tempData = {}
           for (const v of _this.list) {
             if (v.id === row.id) {
