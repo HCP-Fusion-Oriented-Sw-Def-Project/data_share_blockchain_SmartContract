@@ -520,10 +520,9 @@ export default {
             _this.total = _this.dataSourceList.length
           })
         })
+      }).catch((error) => {
+        console.log(error)
       })
-        .catch((error) => {
-          console.log(error)
-        })
     },
     // 获得参数列表
     getParametersList() {

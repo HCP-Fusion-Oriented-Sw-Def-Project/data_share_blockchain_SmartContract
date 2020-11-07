@@ -156,9 +156,9 @@
 
 <script>
 import { initWSocket } from '@/utils/wsCluster'
-
+import { loginBaas, getList } from '@/api/dataList'
 import echarts from 'echarts'
-import store from '../../store'
+// import store from '../../store'
 // import store from '../../store'
 require('echarts/theme/macarons')
 
@@ -523,7 +523,8 @@ export default {
       },
       contractNameList: '',
       contractIdList: [],
-      listLoading: true
+      listLoading: true,
+      contractList1: []
     }
   },
   computed: {
@@ -589,6 +590,7 @@ export default {
     },
     contractLogListByDate(nval) {
       const contractList = nval.data
+      console.log(nval.data)
       if (contractList.length !== 0) {
         // 将所有节点先放入图中
         var data = []
@@ -606,13 +608,14 @@ export default {
           // )
           // 管理员：所有合约；普通用户：我的合约
           var res = false
-          var contractlist = this.$store.state.dataShare.contractProcessList
-          for (const v of contractlist) {
-            if (v.id === contractID) {
+          var _this = this
+          // var contractlist = this.$store.state.dataShare.contractProcessList
+          for (const v of _this.contractList1) {
+            if (v.contractID === contractID) {
               res = true
               break
             }
-            if (v.id === contract.contractID) {
+            if (v.contractID === contract.contractID) {
               res = true
               break
             }
@@ -674,9 +677,9 @@ export default {
             }
           } else {
             // 用户
-            if (store.state.user.roles.indexOf('admin') === -1 && contract.pubKey !== this.$store.state.user.pubKey.split(',')[0]) {
-              continue
-            }
+            // if (store.state.user.roles.indexOf('admin') === -1 && contract.pubKey !== _this.$store.state.user.pubKey.split(',')[0]) {
+            //     continue
+            // }
             // 判断data中是否已经含有这个节点了
             res1 = data.some((item) => {
               if (item.name === contractID) {
@@ -735,16 +738,16 @@ export default {
           }
         }
         if (data.length === 0 && links.length === 0) {
-          this.noDataShow('chart3')
+          _this.noDataShow('chart3')
         } else {
-          this.myOption3.series[0].data = data
-          this.myOption3.series[0].links = links
-          this.chart3 = echarts.init(document.getElementById('chart3'), 'macarons')
-          this.chart3.setOption(this.myOption3)
-          this.chart3.hideLoading()
+          _this.myOption3.series[0].data = data
+          _this.myOption3.series[0].links = links
+          _this.chart3 = echarts.init(document.getElementById('chart3'), 'macarons')
+          _this.chart3.setOption(this.myOption3)
+          _this.chart3.hideLoading()
         }
       } else {
-        this.noDataShow('chart3')
+        _this.noDataShow('chart3')
       }
     },
     contractProcessList(nval) {
@@ -758,6 +761,42 @@ export default {
       this.getlist()
     }, 1000)
     initWSocket()
+    var _this = this
+    new Promise((resolve, reject) => {
+      loginBaas().then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          var token = res.headers.get('authorization')
+          resolve(token)
+        } else {
+          reject()
+        }
+      })
+    }).then(function(token) {
+      return new Promise((resolve, reject) => {
+        getList(token).then((res1) => {
+          if (res1.code === 20000) {
+            resolve(res1)
+          } else {
+            reject()
+          }
+        })
+      })
+    }).then(function(result) {
+      return new Promise((resolve, reject) => {
+        var data = result.data.data
+        console.log(result)
+        // var tempData = []
+        // data为内部变量都是对象,用in访问
+        for (const v in data) {
+          for (const i of data[v].contracts) {
+            _this.contractIdList.push(i)
+          }
+        }
+      })
+    }).catch((error) => {
+      console.log(error)
+    })
   },
   mounted() {
   },
