@@ -10,7 +10,7 @@ import {
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API1 + '/algo', // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API + '/algo', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   // baseURL: 'http://10.62.10.87:8104/share', // api的base_url, // url = base url + request url
   // baseURL: 'http://10.62.10.70:7979/algo', // api的base_url, // url = base url + request url

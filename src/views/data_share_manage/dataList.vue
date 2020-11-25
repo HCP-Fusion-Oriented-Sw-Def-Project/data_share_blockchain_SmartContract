@@ -17,7 +17,7 @@
           @keyup.enter.native="handleFilter"
         />
       </div>
-      <div style="float:left;margin-left:230px;">
+      <div style="float:right;margin-right:5px;">
         <el-button
           v-waves
           type="primary"
@@ -40,91 +40,90 @@
       <span style="font-size:15px; font-weight:bold;">数据清单:</span>
     </div>
 
-    <div class="table">
-      <el-table
-        :key="tableKey"
-        v-loading="listLoading"
-        :data="dataList.slice(
-          (listQuery.pages - 1) * listQuery.rows,
-          listQuery.pages * listQuery.rows
-        )"
-        element-loading-text="给我一点时间"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-        :height="fullHeight-300"
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="dataList.slice(
+        (listQuery.pages - 1) * listQuery.rows,
+        listQuery.pages * listQuery.rows
+      )"
+      element-loading-text="给我一点时间"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+      :height="fullHeight-300"
+    >
+      <el-table-column
+        type="selection"
+        width="65"
+        align="center"
+      />
+      <el-table-column
+        align="center"
+        label="序号"
+        width="65"
+        type="index"
+      />
+      <el-table-column
+        align="center"
+        label="名称"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-        />
-        <el-table-column
-          align="center"
-          label="序号"
-          width="65"
-          type="index"
-        />
-        <el-table-column
-          align="center"
-          label="名称"
-          width="150px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.dataName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="所属类别"
-          width="150px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.typeId }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="访问权限"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <span v-if="scope.row.accessRight == '1'">无条件访问</span>
-            <span v-if="scope.row.accessRight == '2'">申请后访问</span>
-            <span v-if="scope.row.accessRight == '3'">可申请访问但禁止查看详情</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="305px"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              style="margin-left:10px"
-              @click="handleApply(scope.row)"
-            >
-              详情
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container">
-        <el-pagination
-          background
-          :current-page="listQuery.pages"
-          :page-sizes="[5, 10, 20, 30, 50]"
-          :page-size="listQuery.rows"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+        <template slot-scope="scope">
+          <span>{{ scope.row.dataName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="所属类别"
+        width="300px"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.typeId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="访问权限"
+        width="300"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.accessRight == '1'">无条件访问</span>
+          <span v-if="scope.row.accessRight == '2'">申请后访问</span>
+          <span v-if="scope.row.accessRight == '3'">可申请访问但禁止查看详情</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="操作"
+        width="300px"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            size="mini"
+            style="margin-left:10px"
+            @click="handleApply(scope.row)"
+          >
+            详情
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pagination-container">
+      <el-pagination
+        background
+        :current-page="listQuery.pages"
+        :page-sizes="[5, 10, 20, 30, 50]"
+        :page-size="listQuery.rows"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
+    <!-- </div> -->
     <el-dialog
       v-dialogDrag
       title="数据详情"
@@ -179,17 +178,19 @@
         >
           确定
         </el-button>
+        <!-- </div> -->
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+// import $ from 'jquery'
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
-import $ from 'jquery'
 import { init } from '@/utils/wsCluster'
 import { getDataShareInfoBase, getMyShareParam, addApplication } from '@/api/dataShare'
+import { loginBaas, getList } from '@/api/dataList'
 export default {
   directives: {
     waves
@@ -268,23 +269,34 @@ export default {
     getDataList() {
       var _this = this
       new Promise((resolve, reject) => {
-        _this.loginBass().then((res) => {
-          if (res !== null) { resolve(res) } else { reject() }
+        loginBaas().then((res) => {
+          if (res !== null) { resolve(res.headers.get('authorization')) } else { reject() }
         })
       }).then(function(token) {
         return new Promise((resolve, reject) => {
-          var setting = {
-            url: 'https://trybaas.internetapi.cn/api/apps/61830b9d-2cbe-4afb-9247-2e7a1c325994/contracts',
-            method: 'GET',
-            timeout: '0',
-            headers: {
-              'Content-Type': 'application/json',
-              'accept': 'application/json, text/plain, */*',
-              'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
-              'authorization': 'Bearer ' + token,
-            },
-          }
-          $.ajax(setting).done(function(response) {
+          // $.ajax({
+          //   url: 'https://trybaas.internetapi.cn/api/apps/ecffe8fc-6913-4f64-99ff-940a12937515/contracts',
+          //   method: 'GET',
+          //   timeout: '0',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //     'accept': 'application/json, text/plain, */*',
+          //     'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+          //     'authorization': 'Bearer ' + token,
+          //   },
+          // }).done((response) => {
+          //   if (response.code === 20000) {
+          //     resolve(response)
+          //   } else {
+          //     _this.$notify({
+          //       title: '获取合约列表失败',
+          //       type: 'error',
+          //       duration: 2000
+          //     })
+          //     reject()
+          //   }
+          // })
+          getList(token).then((response) => {
             if (response.code === 20000) {
               resolve(response)
             } else {
@@ -420,8 +432,30 @@ export default {
         }
       })
     },
-    handleFilter() { },
-    resetListQuery() { },
+    handleFilter() {
+      if (this.listQuery.name === '' && this.listQuery.type === '') {
+        this.$message('请输入查询条件!')
+      } else {
+        var temp = []
+        console.log(this.dataList)
+        for (const v of this.dataList) {
+          if (v.dataName.indexOf(this.listQuery.name) >= 0 && v.dataType.indexOf(this.listQuery.type) >= 0) {
+            temp.push(v)
+          }
+        }
+        this.dataList = temp
+        this.total = this.dataList.length
+      }
+    },
+    resetListQuery() {
+      this.getDataList()
+      this.listQuery = {
+        name: '',
+        type: '',
+        pages: 1,
+        rows: 10
+      }
+    },
     handleSizeChange(val) {
       this.listQuery.rows = val
     },
@@ -476,7 +510,7 @@ export default {
 </script>
 <style scoped>
 .table {
-  width: 827px;
+  width: 1027px;
   /* min-width: 850px; */
 }
 </style>

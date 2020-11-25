@@ -57,22 +57,35 @@
         type="index"
         :index="indexMethod"
       />
-      <el-table-column width="110px" align="center" label="名称">
+      <el-table-column
+        width="110px"
+        align="center"
+        label="名称"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="所属类别">
+      <el-table-column
+        align="center"
+        label="所属类别"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.category }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="数据类型">
+      <el-table-column
+        align="center"
+        label="数据类型"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.type }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="审核状态">
+      <el-table-column
+        align="center"
+        label="审核状态"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.state }}</span>
         </template>
@@ -85,7 +98,11 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-popover placement="top" width="160" trigger="click">
+          <el-popover
+            placement="top"
+            width="160"
+            trigger="click"
+          >
             <p>确定删除吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button
@@ -136,7 +153,7 @@
 
 <script>
 import waves from '@/directive/waves'
-
+import { getMyApplication } from '@/api/dataShare'
 export default {
   name: 'ApplicationHistory',
   directives: {
@@ -205,6 +222,9 @@ export default {
     },
     getList() {
       this.listLoading = true
+      getMyApplication('1').then((res) => {
+        console.log(res)
+      })
       // fetchUserList(this.listQuery).then(response => {
       //   this.list = response.data.data.list;
       //   console.log("this.list:");

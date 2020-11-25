@@ -198,6 +198,39 @@ export const asyncRoutes = [
     ],
   },
   {
+    path: '/blockchain_search',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'blockchain_search',
+    meta: {
+      title: '供应链查询',
+      noCache: true,
+      icon: 'provide',
+      roles: ['admin']
+    },
+    children: [{
+      path: 'search',
+      component: () => import('@/views/blockchain_search/search'),
+      name: 'search',
+      meta: {
+        title: '供应链查询',
+        noCache: true,
+        roles: ['admin']
+      }
+    }, {
+      path: 'result',
+      component: () => import('@/views/blockchain_search/result'),
+      name: 'result',
+      hidden: true,
+      meta: {
+        title: '查询结果',
+        icon: '',
+        noCache: true,
+        roles: ['admin']
+      }
+    }]
+  },
+  {
     path: '/data_share_manage',
     component: Layout,
     redirect: 'noredirect',
@@ -278,6 +311,17 @@ export const asyncRoutes = [
       name: 'applicationHistory',
       hidden: true,
       component: () => import('@/views/data_share_manage/applicationHistory'),
+      meta: {
+        title: '历史记录',
+        noCache: true,
+        roles: ['dataUser']
+      },
+    },
+    {
+      path: 'useHistoryRecord',
+      name: 'useHistoryRecord',
+      hidden: true,
+      component: () => import('@/views/data_share_manage/useHistoryRecord'),
       meta: {
         title: '历史记录',
         noCache: true,

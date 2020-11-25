@@ -40,7 +40,6 @@ library.add(faRedo)
 library.add(faCog)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-// import $ from 'jquery'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

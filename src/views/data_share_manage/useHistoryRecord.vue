@@ -8,6 +8,18 @@
         placeholder="名称"
         @keyup.enter.native="handleFilter"
       />
+      <el-input
+        v-model="listQuery.type"
+        class="filter-item"
+        placeholder="类别"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.applicant"
+        class="filter-item"
+        placeholder="申请人"
+        @keyup.enter.native="handleFilter"
+      />
     </div>
     <!-- 中部，添加、批量删除等操作-->
     <div class="edit-container">
@@ -19,19 +31,11 @@
       >
         刷新
       </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        icon="el-icon-time"
-        @click="handleHistory"
-      >
-        历史记录
-      </el-button>
       <div class="filter-button">
         <el-button
           v-waves
-          size="small"
           class="filter-item"
+          size="small"
           type="primary"
           icon="el-icon-search"
           @click="handleFilter"
@@ -40,8 +44,8 @@
         </el-button>
         <el-button
           v-waves
-          size="small"
           class="filter-item"
+          size="small"
           type="info"
           icon="el-icon-refresh"
           @click="resetListQuery"
@@ -53,7 +57,10 @@
     <el-table
       :key="tableKey"
       v-loading="listLoading"
-      :data="list"
+      :data="verifyList.slice(
+        (pageSize.page - 1) * pageSize.size,
+        pageSize.page * pageSize.size
+      )"
       element-loading-text="给我一点时间"
       border
       fit
@@ -65,12 +72,28 @@
         label
         width="65"
         type="index"
-        :index="indexMethod"
       />
       <el-table-column
-        width="200px"
         align="center"
-        label="名称"
+        width="120px"
+        label="申请人"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.applicant }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        width="180px"
+        align="center"
+        label="申请理由"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.instructions }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="数据名称"
       >
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
@@ -86,18 +109,18 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="数据类型"
+        label="申请时间"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.type }}</span>
+          <span>{{ scope.row.applyTime | formatTimes }}</span>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
-        label="申请时间"
+        label="处理时间"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.createDate | formatTimes }}</span>
+          <span>{{ scope.row.passTime | formatTimes }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -107,20 +130,20 @@
         <template slot-scope="scope">
           <span>
             <el-tag
-              v-if="scope.row.state == 1"
-              :type="scope.row.state | statusFilter"
+              v-if="scope.row.auditStatus == 1"
+              :type="scope.row.auditStatus | statusFilter"
             >未审核</el-tag>
             <el-tag
-              v-if="scope.row.state == 2"
-              :type="scope.row.state | statusFilter"
+              v-if="scope.row.auditStatus == 2"
+              :type="scope.row.auditStatus | statusFilter"
             >审核不通过</el-tag>
             <el-tag
-              v-if="scope.row.state == 3"
-              :type="scope.row.state | statusFilter"
+              v-if="scope.row.auditStatus == 3"
+              :type="scope.row.auditStatus | statusFilter"
             >审核通过</el-tag>
             <el-tag
-              v-if="scope.row.state == 4"
-              :type="scope.row.state | statusFilter"
+              v-if="scope.row.auditStatus == 4"
+              :type="scope.row.auditStatus | statusFilter"
             >禁用</el-tag>
           </span>
         </template>
@@ -133,124 +156,64 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.state === '3'"
-            type="danger"
-            size="mini"
-            style="margin-left:10px"
-            @click="handleBack()"
+          <el-popover
+            placement="top"
+            width="160"
+            trigger="click"
           >
-            退订
-          </el-button>
-          <el-button
-            v-if="scope.row.state === '3'"
-            type="primary"
-            size="mini"
-            style="margin-left:10px"
-            @click="downloadData()"
-          >
-            下载
-          </el-button>
-          <el-button
-            v-if="scope.row.state === '1' || scope.row.state === '2'"
-            type="danger"
-            size="mini"
-            style="margin-left:10px"
-            @click="handleCancel()"
-          >
-            取消
-          </el-button>
+            <p>确定删除吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button
+                size="mini"
+                type="text"
+                @click="cancelPopover(scope.row, scope.$index)"
+              >
+                取消
+              </el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                @click="
+                  cancelPopover(scope.row, scope.$index),
+                  handleDelete(scope.row)
+                "
+              >
+                确定
+              </el-button>
+            </div>
+            <el-button
+              :ref="'btn' + scope.$index"
+              slot="reference"
+              size="small"
+              type="danger"
+              style="margin-left:10px"
+            >
+              删除
+            </el-button>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-container">
       <el-pagination
         background
-        :current-page="listQuery.page"
+        :current-page="pageSize.page"
         :page-sizes="[5, 10, 20, 30, 50]"
-        :page-size="listQuery.size"
+        :page-size="pageSize.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
     </div>
-
-    <el-dialog
-      v-dialogDrag
-      title="数据详情"
-      :visible.sync="dialogTableVisible"
-      top="8vh"
-    >
-      <div class="dialog">
-        <el-row>
-          <el-table
-            :data="tableData"
-            border
-            fit
-            highlight-current-row
-            style="width: 100%"
-          >
-            <el-table-column
-              label="序号"
-              type="index"
-            />
-            <el-table-column label="字段名称">
-              <template slot-scope="scope">
-                <span>{{ scope.row.name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="英文编码">
-              <template slot-scope="scope">
-                <span>{{ scope.row.code }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="字段描述">
-              <template slot-scope="scope">
-                <span>{{ scope.row.discription }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="访问权限">
-              <template slot-scope="scope">
-                <el-select
-                  v-model="scope.row.permiss"
-                  class="filter-item"
-                  size="small"
-                >
-                  <el-option
-                    v-for="item in optionPermiss"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column label="关联字段">
-              <template slot-scope="scope">
-                <span>{{ scope.row.relation }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-row>
-        <el-row class="dialog-button">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleDownload()"
-          >
-            下载
-          </el-button>
-        </el-row>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import waves from '@/directive/waves'
-import { getMyApplication } from '@/api/dataShare'
+import { getAppliedList } from '@/api/dataShare'
 export default {
+  name: 'ApplicationHistory',
   directives: {
     waves
   },
@@ -284,17 +247,20 @@ export default {
     return {
       tableKey: 0,
       fullHeight: document.documentElement.clientHeight,
-      list: [],
+      verifyList: [],
       total: 0,
       roleTotal: null,
-      listLoading: false,
+      listLoading: true,
       listQuery: {
-        page: 1,
-        size: 10,
-        name: ''
+        name: '',
+        type: '',
+        applicant: ''
       },
-      dialogTableVisible: false,
-      tableData: []
+      pageSize: {
+        size: 10,
+        page: 1
+      },
+      applylist: []
     }
   },
   watch: {
@@ -325,30 +291,47 @@ export default {
       }
     },
     getList() {
-      getMyApplication('0').then((res) => {
+      this.listLoading = true
+      getAppliedList('1').then((res) => {
         console.log(res)
-        let tempData = {}
-        for (const v of res.data.data) {
-          tempData = {
-            name: v.dataShareInfoBase.dataName,
-            category: v.dataShareInfoBase.typeId,
-            type: v.dataShareInfoBase.dataType,
-            state: v.dataShareApplication.auditStatus,
-            createDate: v.dataShareApplication.createDate
+        if (res.data.code === 20000) {
+          for (const v of res.data.data) {
+            this.verifyList.push({
+              id: v.dataShareApplication.id,
+              dataId: v.dataShareInfoBase.id,
+              applicant: v.dataShareApplication.applicant.substring(0, 5),
+              name: v.dataShareInfoBase.dataName,
+              category: v.dataShareInfoBase.typeId,
+              auditStatus: v.dataShareApplication.auditStatus,
+              instructions: v.dataShareApplication.useDescription,
+              pubkey: v.dataShareApplication.applicant,
+              passTime: v.dataShareApplication.updateDate,
+              applyTime: v.dataShareApplication.createDate
+            })
           }
-          this.list.push(tempData)
+          this.total = this.verifyList.length
+          this.listLoading = false
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
         }
-        this.total = this.list.length
+      }).catch((error) => {
+        console.log(error)
       })
     },
     handleFilter() {
       this.listQuery.page = 1
-      this.getMyApplication()
+      this.getList()
     },
     resetListQuery() {
       this.listQuery = {
         page: 1,
         size: 10,
+        loginName: '',
         name: '',
         type: '',
         applicant: ''
@@ -356,25 +339,29 @@ export default {
       this.handleFilter()
     },
     handleSizeChange(val) {
-      this.listQuery.size = val
-      this.getList()
+      this.pageSize.size = val
     },
     handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
+      this.pageSize.page = val
     },
-    handleHistory() {
-      const temp = {
-        name: 'applicationHistory',
-        params: { id: '1' }
-      }
-      this.$router.push(temp)
+    cancelPopover(row, index) {
+      this.$refs['btn' + index].$el.click()
     },
-    downloadData() {
-      this.dialogTableVisible = true
-    },
-    handleCancel() { },
-    handleDownload() { }
+    handleDelete(row) {
+      // deleteLogicalUser(row.id).then(response =>{
+      //   this.$notify({
+      //     title: '成功',
+      //     message: response.data.msg,
+      //     type: 'success',
+      //     duration: 2000
+      //   });
+      //   const index = this.list.indexOf(row);
+      //   this.list.splice(index, 1);
+      //   this.handleFilter();
+      // }).catch(error=>{
+      //   console.log(error)
+      // })
+    }
   }
 }
 </script>
@@ -397,7 +384,7 @@ export default {
 }
 .edit-container {
   margin-top: 0;
-  margin-bottom: 21px;
+  margin-bottom: 10px;
   .filter-button {
     float: right;
   }
@@ -412,15 +399,5 @@ export default {
 }
 .el-button {
   margin-left: 5px;
-}
-.dialog {
-  height: 600px;
-  overflow-y: auto;
-  .dialog-button {
-    text-align: center;
-    .el-button {
-      margin-left: 20px;
-    }
-  }
 }
 </style>

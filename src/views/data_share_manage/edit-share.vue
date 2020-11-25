@@ -1051,7 +1051,9 @@ export default {
     handleDelete(row, index) {
       // console.log(row);
       let flag = false
+      console.log(this.formTable.tableData)
       this.formTable.tableData.splice(index, 1)
+      console.log(this.formTable.tableData)
       for (const v of this.formTable.tableData) {
         if (v.referenceField !== '') flag = true
       }

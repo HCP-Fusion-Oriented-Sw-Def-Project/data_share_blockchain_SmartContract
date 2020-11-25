@@ -166,6 +166,10 @@ export default {
   name: 'LogAudit',
   filters: {
     formatTimes(updateDate) {
+      // console.log(typeof updateDate )
+      if (updateDate.constructor === String) {
+        updateDate = Number(updateDate)
+      }
       const y = new Date(updateDate).getFullYear()
       const m = new Date(updateDate).getMonth() + 1
       const d = new Date(updateDate).getDate()
@@ -755,7 +759,7 @@ export default {
     }
   },
   created() {
-    this.$store.commit('setContractKey', '04421c01a016eddc6c670a653de8f6a1bc0cded6ca954ab8dabb05a147544a40c83cddb8fd9856e6a40691898a675e9ac6f1bdfda3b4187e3a90a0b28f4590fb39' + ',52ade32d48a3ca77f0ea30d1509a2d3e7978cfafee6de70f85ee074be5517c21')
+    this.$store.commit('setContractKey', '04c4c855862b53f323e077ccfcc744ecc2c0a04645ed16d99ede8fd5866b38c0670a97ad22c6260d1a4672aba2a5fe229a2d4eba34627c054aab102620afa288c1' + ',dc19f5a32466a89f6abcaf11e1477817b960c6dec120e1026960eb049cb5c5ac')
     this.$store.commit('setNodeAddr', '39.104.208.148:21030')
     setTimeout(() => {
       this.getlist()

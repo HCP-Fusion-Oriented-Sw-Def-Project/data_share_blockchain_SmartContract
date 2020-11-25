@@ -1,5 +1,5 @@
 import $ from 'jquery'
-
+// import axios from 'axios'
 export function loginBaas() {
   return fetch('https://trybaas.internetapi.cn/api/auth/login', {
     headers: {
@@ -21,8 +21,11 @@ export function loginBaas() {
 
 export function getList(token) {
   return $.ajax({
-    url: 'https://trybaas.internetapi.cn/api/apps/61830b9d-2cbe-4afb-9247-2e7a1c325994/contracts',
+    url: 'https://trybaas.internetapi.cn/api/apps/ecffe8fc-6913-4f64-99ff-940a12937515/contracts',
     method: 'GET',
+    // dataType: 'jsonp',
+    // jsonp: 'callback', // 指定一个查询参数名称来覆盖默认的 jsonp 回调参数名 callback
+    // jsonpCallback: 'handleResponse', // 设置回调函数名
     timeout: '0',
     headers: {
       'Content-Type': 'application/json',
@@ -30,5 +33,19 @@ export function getList(token) {
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
       'authorization': 'Bearer ' + token,
     },
+    // success: function(response, status, xhr) {
+    //   console.log('状态为：' + status + ',状态是：' + xhr.statusText)
+    //   console.log(response)
+    // }
   })
 }
+// export function getList(token) {
+//   return axios.get('https://trybaas.internetapi.cn/api/apps/ecffe8fc-6913-4f64-99ff-940a12937515/contracts', {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'accept': 'application/json, text/plain, */*',
+//       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
+//       'authorization': 'Bearer ' + token,
+//     },
+//   })
+// }

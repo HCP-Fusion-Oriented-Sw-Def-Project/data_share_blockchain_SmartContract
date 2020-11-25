@@ -147,8 +147,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'ptest',
-        password: 'test@123456',
+        username: '',
+        password: 'test@123',
         imageCode: '',
         randomStr: ''
       },

@@ -114,11 +114,14 @@ export function editDataShareStatus(data) {
 }
 
 // 获取我的申请记录
-export function getMyApplication() {
+export function getMyApplication(data) {
   return request({
     dataType: 'json',
     url: '/dataShareApplication/user',
-    method: 'get'
+    method: 'get',
+    params: {
+      isHistory: data
+    }
   })
 }
 
@@ -142,11 +145,14 @@ export function deleteApplication(id) {
 }
 
 // 获取我的共享被申请的记录
-export function getAppliedList() {
+export function getAppliedList(data) {
   return request({
     dataType: 'json',
     url: '/dataShareApplication/manage',
-    method: 'get'
+    method: 'get',
+    params: {
+      isHistory: data
+    }
   })
 }
 

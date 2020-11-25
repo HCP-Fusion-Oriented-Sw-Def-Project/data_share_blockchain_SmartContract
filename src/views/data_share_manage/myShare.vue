@@ -738,11 +738,8 @@ export default {
       return fetch('https://trybaas.internetapi.cn/api/apps', {
         headers: {
           'Content-Type': 'application/json',
-          // 'accept': 'application/json, text/plain, */*',
-          // 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5',
           'authorization': 'Bearer ' + token,
         },
-        // referrer: 'https://trybaas.internetapi.cn/',
         referrerPolicy: 'strict-origin-when-cross-origin',
         body: JSON.stringify(data),
         method: 'POST',
@@ -800,6 +797,14 @@ export default {
             }).then(function(token) {
               // 生成合约
               return new Promise((resolve, reject) => {
+                const fieldList = []
+                if (obj.formTable.tableData.length !== 0) {
+                  for (const v of obj.formTable.tableData) {
+                    fieldList.push({ name: v.chineseName, code: v.englishName })
+                  }
+                } else {
+                  fieldList.push({ name: '', code: '*' })
+                }
                 const contractCfg = {
                   contractName: obj.basicInfo.name,
                   basicInfo: '',
@@ -810,10 +815,11 @@ export default {
                   dbPWD: obj.shareControl.dataPassword,
                   defaultAccept: obj.shareControl.defaultPermiss === '1',
                   accessPolicy: 'DAC',
-                  chainName: 'demo'
+                  chainName: 'open-network',
+                  fieldList: fieldList
                 }
                 const appInfo = {
-                  chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+                  chainID: 'ecffe8fc-6913-4f64-99ff-940a12937515',
                   coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
                   intro: '1',
                   name: obj.basicInfo.name,
@@ -830,8 +836,10 @@ export default {
                   contractCfg: contractCfg,
                   contractInfo: contractInfo
                 }
+                // 创建合约,返回节点地址和当前合约的公私玥
                 _this.createShareData(data, token).then((res1) => {
                   // 获得返回值当前合约节点ip, 当前合约公私玥
+                  console.log(res1)
                   _this.$store.commit('setNodeAddr', res1.data.nodeAddr)
                   _this.$store.commit('setContractKey', res1.data.keyPair.publicKey + ',' + res1.data.keyPair.privateKey)
                   resolve()
@@ -985,10 +993,11 @@ export default {
                   // isPrivate: true,
                   base64EncodedData: obj.shareControl.base64EncodedData,
                   defaultAccept: obj.shareControl.defaultPermiss === '1',
-                  accessPolicy: 'DAC'
+                  accessPolicy: 'DAC',
+                  chainName: 'open-network'
                 }
                 const appInfo = {
-                  chainID: '61830b9d-2cbe-4afb-9247-2e7a1c325994',
+                  chainID: 'ecffe8fc-6913-4f64-99ff-940a12937515',
                   coverUrl: 'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAZABMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKAP/2Q==',
                   intro: '21',
                   name: obj.basicInfo.name,

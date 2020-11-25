@@ -315,7 +315,7 @@ window.executeCurrentContract = function(method, strarg, cb) {
 window.deleteFile = function(contractName) {
   var request = {}
   request.action = "deleteFile"
-  request.id = contractName
+  request.file = contractName
   // request.isPrivate = true
   global.wssocket.send(JSON.stringify(request))
 }

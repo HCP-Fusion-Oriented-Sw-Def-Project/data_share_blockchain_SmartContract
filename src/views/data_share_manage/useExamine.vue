@@ -31,6 +31,14 @@
       >
         刷新
       </el-button>
+      <el-button
+        size="small"
+        type="primary"
+        icon="el-icon-time"
+        @click="getHistory"
+      >
+        历史记录
+      </el-button>
       <div class="filter-button">
         <el-button
           v-waves
@@ -211,12 +219,13 @@ export default {
     }
   },
   methods: {
+    // 获取申请
     getList() {
       this.listLoading = true
-      getAppliedList().then((res) => {
+      getAppliedList('0').then((res) => {
         console.log(res)
-        for (const v of res.data.data) {
-          if (v.dataShareApplication.auditStatus === '1') {
+        if (res.data.code === 20000) {
+          for (const v of res.data.data) {
             this.verifyList.push({
               id: v.dataShareApplication.id,
               dataId: v.dataShareInfoBase.id,
@@ -228,8 +237,17 @@ export default {
               pubkey: v.dataShareApplication.applicant
             })
           }
+          this.listLoading = false
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
         }
-        this.listLoading = false
+      }).catch((error) => {
+        console.log(error)
       })
       // window.executeContract('testpermiss4', 'getStatusList', '', (res) => {
       //   console.log(
@@ -255,7 +273,7 @@ export default {
     },
     handleSizeChange(val) { },
     handleCurrentChange(val) { },
-
+    // 通过申请
     handlePass(row, index) {
       const tempData = {
         id: row.id,
@@ -266,12 +284,30 @@ export default {
       console.log(row)
       getJudgeAccess(tempData).then((res) => {
         console.log(res)
-        window.executeContract(row.name, 'accept', row.pubkey, (res) => {
-          console.log(res)
-          this.verifyList.splice(index, 1)
-        })
+        if (res.data.code === 20000) {
+          window.executeContract(row.name, 'accept', row.pubkey, (res) => {
+            console.log(res)
+            this.verifyList.splice(index, 1)
+            this.$notify({
+              title: '成功',
+              message: '通过审核',
+              type: 'success',
+              duration: 1000
+            })
+          })
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
     },
+    // 申请不通过
     handleStop(row, index) {
       const tempData = {
         id: row.id,
@@ -281,12 +317,39 @@ export default {
       }
       getJudgeAccess(tempData).then((res) => {
         console.log(res)
-        window.executeContract(row.name, 'cancel', row.pubkey, (res) => {
-          console.log(res)
-          this.verifyList.splice(index, 1)
-          // this.getAppliedList()
-        })
+        if (res.data.code === 20000) {
+          window.executeContract(row.name, 'cancel', row.pubkey, (res) => {
+            console.log(res)
+            this.verifyList.splice(index, 1)
+            this.$notify({
+              title: '成功',
+              message: '不予通过',
+              type: 'warning',
+              duration: 1000
+            })
+            // this.getAppliedList()
+          })
+        } else {
+          this.$notify({
+            title: '失败',
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
       })
+    },
+    // 获取历史记录
+    getHistory() {
+      const temp = {
+        name: 'useHistoryRecord'
+      }
+      this.$router.push(temp)
+      // getAppliedList('1').then((res) => {
+      //   console.log(res)
+      // })
     }
   }
 }
