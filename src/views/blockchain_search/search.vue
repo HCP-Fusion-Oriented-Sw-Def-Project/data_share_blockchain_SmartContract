@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import { initWSocket } from '@/utils/wsCluster'
 export default {
   name: 'Search',
   props: {
@@ -53,11 +54,16 @@ export default {
       }
     }
   },
+  created() {
+    initWSocket()
+  },
   methods: {
     search() {
       this.$refs['submit'].validate((valid) => {
         if (valid) {
-          this.$router.push({ name: 'result', params: { keyword: this.key.keyword } })
+          const sessionStorage = window.sessionStorage
+          sessionStorage.setItem('keyword', this.key.keyword)
+          this.$router.push({ name: 'result' })
         }
       })
 

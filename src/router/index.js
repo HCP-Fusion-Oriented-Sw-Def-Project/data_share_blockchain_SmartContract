@@ -206,7 +206,7 @@ export const asyncRoutes = [
       title: '供应链查询',
       noCache: true,
       icon: 'provide',
-      roles: ['admin']
+      roles: ['admin', 'provider']
     },
     children: [{
       path: 'search',
@@ -215,7 +215,7 @@ export const asyncRoutes = [
       meta: {
         title: '供应链查询',
         noCache: true,
-        roles: ['admin']
+        roles: ['admin', 'provider']
       }
     }, {
       path: 'result',
@@ -226,7 +226,7 @@ export const asyncRoutes = [
         title: '查询结果',
         icon: '',
         noCache: true,
-        roles: ['admin']
+        roles: ['admin', 'provider']
       }
     }]
   },
