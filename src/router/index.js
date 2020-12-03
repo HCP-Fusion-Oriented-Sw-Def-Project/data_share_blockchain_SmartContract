@@ -217,6 +217,18 @@ export const asyncRoutes = [
         noCache: true,
         roles: ['admin', 'provider']
       }
+    },
+    {
+      path: 'process',
+      component: () => import('@/views/blockchain_search/process'),
+      name: 'process',
+      hidden: true,
+      meta: {
+        title: '供应链流程',
+        icon: '',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
     }, {
       path: 'result',
       component: () => import('@/views/blockchain_search/result'),

@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       key: {
-        keyword: ''
+        keyword: '2020110132'
       },
       rule: {
         keyword: [{ required: true, message: '请输入搜索内容' }],
@@ -63,7 +63,7 @@ export default {
         if (valid) {
           const sessionStorage = window.sessionStorage
           sessionStorage.setItem('keyword', this.key.keyword)
-          this.$router.push({ name: 'result' })
+          this.$router.push({ name: 'process' })
         }
       })
 
