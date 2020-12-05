@@ -197,51 +197,51 @@ export const asyncRoutes = [
     },
     ],
   },
-  {
-    path: '/blockchain_search',
-    component: Layout,
-    redirect: 'noredirect',
-    name: 'blockchain_search',
-    meta: {
-      title: '供应链查询',
-      noCache: true,
-      icon: 'provide',
-      roles: ['admin', 'provider']
-    },
-    children: [{
-      path: 'search',
-      component: () => import('@/views/blockchain_search/search'),
-      name: 'search',
-      meta: {
-        title: '供应链查询',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    },
-    {
-      path: 'process',
-      component: () => import('@/views/blockchain_search/process'),
-      name: 'process',
-      hidden: true,
-      meta: {
-        title: '供应链流程',
-        icon: '',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    }, {
-      path: 'result',
-      component: () => import('@/views/blockchain_search/result'),
-      name: 'result',
-      hidden: true,
-      meta: {
-        title: '查询结果',
-        icon: '',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    }]
-  },
+  // {
+  //   path: '/blockchain_search',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   name: 'blockchain_search',
+  //   meta: {
+  //     title: '供应链查询',
+  //     noCache: true,
+  //     icon: 'provide',
+  //     roles: ['admin', 'provider']
+  //   },
+  //   children: [{
+  //     path: 'search',
+  //     component: () => import('@/views/blockchain_search/search'),
+  //     name: 'search',
+  //     meta: {
+  //       title: '供应链查询',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   },
+  //   {
+  //     path: 'process',
+  //     component: () => import('@/views/blockchain_search/process'),
+  //     name: 'process',
+  //     hidden: true,
+  //     meta: {
+  //       title: '供应链流程',
+  //       icon: '',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   }, {
+  //     path: 'result',
+  //     component: () => import('@/views/blockchain_search/result'),
+  //     name: 'result',
+  //     hidden: true,
+  //     meta: {
+  //       title: '查询结果',
+  //       icon: '',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   }]
+  // },
   {
     path: '/data_share_manage',
     component: Layout,
@@ -387,42 +387,42 @@ export const asyncRoutes = [
     }
     ],
   },
-  // {
-  //   path: '/cluster',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   name: 'cluster',
-  //   meta: {
-  //     title: '聚类分析',
-  //     icon: 'data',
-  //     noCache: true,
-  //     roles: ['admin', 'dataUser']
-  //   },
-  //   children: [{
-  //     path: 'dataList',
-  //     component: () => import('@/views/cluster/components/dataList'),
-  //     name: 'Datalist',
-  //     meta: {
-  //       title: '聚类分析',
-  //       icon: 'form',
-  //       noCache: true,
-  //       roles: ['admin', 'dataUser']
-  //     }
-  //   },
-  //   {
-  //     path: 'cluster_vis',
-  //     component: () => import('@/views/cluster/index'),
-  //     name: 'ClusterVis',
-  //     meta: {
-  //       title: '聚类可视化',
-  //       icon: 'form',
-  //       noCache: true,
-  //       roles: ['admin', 'dataUser']
-  //     },
-  //     hidden: true
-  //   }
-  //   ]
-  // },
+  {
+    path: '/cluster',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'cluster',
+    meta: {
+      title: '聚类分析',
+      icon: 'data',
+      noCache: true,
+      roles: ['admin', 'dataUser']
+    },
+    children: [{
+      path: 'dataList',
+      component: () => import('@/views/cluster/components/dataList'),
+      name: 'Datalist',
+      meta: {
+        title: '聚类分析',
+        icon: 'form',
+        noCache: true,
+        roles: ['admin', 'dataUser']
+      }
+    },
+    {
+      path: 'cluster_vis',
+      component: () => import('@/views/cluster/index'),
+      name: 'ClusterVis',
+      meta: {
+        title: '聚类可视化',
+        icon: 'form',
+        noCache: true,
+        roles: ['admin', 'dataUser']
+      },
+      hidden: true
+    }
+    ]
+  },
   {
     path: '/visualization',
     component: Layout,
@@ -466,64 +466,64 @@ export const asyncRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/nanning',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   name: 'nanning',
-  //   meta: {
-  //     title: '广西省南宁市数据统计',
-  //     icon: 'component',
-  //     noCache: true,
-  //     roles: ['admin', 'dataUser']
-  //   },
-  //   children: [
-  //     {
-  //       path: 'industry_insurance_analysis',
-  //       component: () => import('@/views/nanning/industry_insurance_analysis'),
-  //       name: 'IndustryInsuranceAnalysis',
-  //       meta: {
-  //         title: '各产业营业收入分析',
-  //         icon: 'form',
-  //         noCache: true,
-  //         roles: ['admin', 'dataUser']
-  //       }
-  //     },
-  //     {
-  //       path: 'region_insurance_analysis',
-  //       component: () => import('@/views/nanning/region_insurance_analysis'),
-  //       name: 'RegionInsuranceAnalysis',
-  //       meta: {
-  //         title: '各区域营业收入分析',
-  //         icon: 'form',
-  //         noCache: true,
-  //         roles: ['admin', 'dataUser']
-  //       }
-  //     },
-  //     {
-  //       path: 'industry',
-  //       component: () => import('@/views/nanning/industry'),
-  //       name: 'Industry',
-  //       meta: {
-  //         title: '产业列表统计',
-  //         icon: 'form',
-  //         noCache: true,
-  //         roles: ['admin', 'dataUser']
-  //       }
-  //     },
-  //     {
-  //       path: 'industry_warning',
-  //       component: () => import('@/views/nanning/industry_warning'),
-  //       name: 'IndustryWarning',
-  //       meta: {
-  //         title: '产业预警',
-  //         icon: 'form',
-  //         noCache: true,
-  //         roles: ['admin', 'dataUser']
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/nanning',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'nanning',
+    meta: {
+      title: '广西省南宁市数据统计',
+      icon: 'component',
+      noCache: true,
+      roles: ['admin', 'dataUser']
+    },
+    children: [
+      {
+        path: 'industry_insurance_analysis',
+        component: () => import('@/views/nanning/industry_insurance_analysis'),
+        name: 'IndustryInsuranceAnalysis',
+        meta: {
+          title: '各产业营业收入分析',
+          icon: 'form',
+          noCache: true,
+          roles: ['admin', 'dataUser']
+        }
+      },
+      {
+        path: 'region_insurance_analysis',
+        component: () => import('@/views/nanning/region_insurance_analysis'),
+        name: 'RegionInsuranceAnalysis',
+        meta: {
+          title: '各区域营业收入分析',
+          icon: 'form',
+          noCache: true,
+          roles: ['admin', 'dataUser']
+        }
+      },
+      {
+        path: 'industry',
+        component: () => import('@/views/nanning/industry'),
+        name: 'Industry',
+        meta: {
+          title: '产业列表统计',
+          icon: 'form',
+          noCache: true,
+          roles: ['admin', 'dataUser']
+        }
+      },
+      {
+        path: 'industry_warning',
+        component: () => import('@/views/nanning/industry_warning'),
+        name: 'IndustryWarning',
+        meta: {
+          title: '产业预警',
+          icon: 'form',
+          noCache: true,
+          roles: ['admin', 'dataUser']
+        }
+      }
+    ]
+  },
   /** when your routing map is too long, you can split it into small modules **/
   // {
   //   path: '/example',

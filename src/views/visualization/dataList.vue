@@ -155,7 +155,6 @@ export default {
       _this.listLoading = true
       new Promise((resolve, reject) => {
         loginBaas().then((res) => {
-          console.log(res)
           if (res.status === 200) {
             var token = res.headers.get('authorization')
             resolve(token)
