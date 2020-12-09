@@ -28,6 +28,13 @@
             >
               搜索
             </el-button>
+            <el-button
+              icon="el-icon-search"
+              type="primary"
+              @click="searchChain"
+            >
+              全链条追溯
+            </el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -66,8 +73,16 @@ export default {
           this.$router.push({ name: 'process' })
         }
       })
+    },
 
-      // this.$emit('search', ['search', this.keyword])
+    searchChain() {
+      this.$refs['submit'].validate((valid) => {
+        if (valid) {
+          const sessionStorage = window.sessionStorage
+          sessionStorage.setItem('keyword', this.key.keyword)
+          this.$router.push({ name: 'graph' })
+        }
+      })
     }
   }
 }
@@ -80,7 +95,7 @@ export default {
   height: 100%;
 }
 .search {
-  width: 500px;
+  width: 700px;
   height: 400px;
 }
 h1 {

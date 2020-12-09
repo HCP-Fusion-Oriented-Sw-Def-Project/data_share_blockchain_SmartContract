@@ -240,6 +240,17 @@ export const asyncRoutes = [
         noCache: true,
         roles: ['admin', 'provider']
       }
+    }, {
+      path: 'graph',
+      component: () => import('@/views/blockchain_search/graph'),
+      name: 'graph',
+      hidden: true,
+      meta: {
+        title: '全链条追溯',
+        icon: '',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
     }]
   },
   {

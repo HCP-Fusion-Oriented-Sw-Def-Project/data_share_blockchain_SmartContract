@@ -398,6 +398,7 @@
 
 <script>
 import Vue from 'vue'
+
 export default {
   data() {
     return {
@@ -418,19 +419,29 @@ export default {
       // 所有公司
       companys: [],
 
-      company: {}
+      company: {},
+
     }
   },
   created() {
-    this.getData()
+    this.getTableData()
+  },
+  mounted() {
+    // this.graph()
+
   },
   methods: {
 
+    // 关系图可视化
+    graph() {
+
+    },
+
     // 获取表格数据
-    getData() {
+    getTableData() {
       const self = this
       const sessionStorage = window.sessionStorage
-      window.executeContract('FoodManagment', 'association', sessionStorage.getItem('keyword'), (res) => {
+      window.executeContract('FoodManagement', 'association', sessionStorage.getItem('keyword'), (res) => {
         const data = JSON.parse(res.result)
         console.log(data.data)
         let company = {}
@@ -505,7 +516,8 @@ export default {
     // 上一步
     pre() {
       this.active--
-    }
+    },
+
   }
 }
 </script>
@@ -522,8 +534,8 @@ export default {
 .mailTable {
   width: 80%;
   margin: 0 auto;
-  border-top: 1px solid #E6EAEE;
-  border-left: 1px solid #E6EAEE;
+  border-top: 1px solid #e6eaee;
+  border-left: 1px solid #e6eaee;
 }
 .mailTable tr td {
   width: 100px;
@@ -531,12 +543,12 @@ export default {
   line-height: 35px;
   box-sizing: border-box;
   padding: 0 10px;
-  border-bottom: 1px solid #E6EAEE;
-  border-right: 1px solid #E6EAEE;
+  border-bottom: 1px solid #e6eaee;
+  border-right: 1px solid #e6eaee;
 }
 .mailTable tr td.column {
-  background-color: #EFF3F6;
-  color: #393C3E;
+  background-color: #eff3f6;
+  color: #393c3e;
   width: 20%;
 }
 .footer {
@@ -546,5 +558,13 @@ export default {
 }
 .hover {
   cursor: pointer;
+}
+.graph {
+  width: 1100px;
+  height: 600px;
+  margin: 0 auto;
+  margin-top: 20px;
+  border: 1px solid #dcdfe6;
+  border-radius: 5px;
 }
 </style>
