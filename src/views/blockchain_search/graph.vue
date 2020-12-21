@@ -95,6 +95,7 @@ export default {
     this.getData()
   },
   methods: {
+
     // 初始化树状图数据
     getData() {
       const myChart = echarts.init(document.getElementById('Graph'))
@@ -180,15 +181,6 @@ export default {
           }
         }
       }
-      // root.children = []
-      // for (let i = 0; i < node.data.length; i++) {
-      //   const obj = {
-      //     name: node.data[i],
-      //     value: `${id}-${i}`,
-      //   }
-      //   root.children.push(obj)
-      // }
-      // }
     },
 
     handleData(data, index, color = '#00f6ff') {
@@ -255,7 +247,6 @@ export default {
   width: 100%;
   height: 850px;
   margin: 0 auto;
-
   border: 1px solid #dcdfe6;
   border-radius: 5px;
 }
