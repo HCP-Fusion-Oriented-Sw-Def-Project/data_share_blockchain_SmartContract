@@ -261,7 +261,7 @@ export default {
         },
         referrer: 'https://trybaas.internetapi.cn/',
         referrerPolicy: 'strict-origin-when-cross-origin',
-        body: JSON.stringify({ email: 'demo@bdware.org', password: 'test@123' }),
+        body: JSON.stringify({ email: 'demo@bdware.org', password: 'bdware2020' }),
         method: 'POST',
         mode: 'cors'
       }).then(response => response.headers.get('authorization'))

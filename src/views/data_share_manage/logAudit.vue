@@ -166,7 +166,7 @@ export default {
   name: 'LogAudit',
   filters: {
     formatTimes(updateDate) {
-      // console.log(typeof updateDate )
+      console.log(typeof updateDate)
       if (updateDate.constructor === String) {
         updateDate = Number(updateDate)
       }
@@ -575,6 +575,7 @@ export default {
     },
     contractLogList(nval) {
       this.list = JSON.parse(JSON.stringify(nval)).data.reverse()
+      console.log(this.list)
       this.listLoading = false
     },
     countContractLog: {
@@ -602,28 +603,29 @@ export default {
         for (const contract of contractList) {
           // console.log(contract.pubKey)
           // 将pubkey转换成合约ID,来判断此pubkey是用户还是合约
-          var contractID = String(this.changePubKeyIntoID(contract.pubKey))
+          // var contractID = String(this.changePubKeyIntoID(contract.pubKey))
+          var contractID = String(contract.key)
           // console.log(contractID)
           // 判断用户还是合约
-          // var res = this.$store.state.dataShare.contractProcessList.some(
-          //   (item) => {
-          //     if (item.id === contractID) return true
-          //   }
-          // )
+          var res = this.$store.state.dataShare.contractProcessList.some(
+            (item) => {
+              if (item.id === contractID) return true
+            }
+          )
           // 管理员：所有合约；普通用户：我的合约
-          var res = false
-          var _this = this
-          // var contractlist = this.$store.state.dataShare.contractProcessList
-          for (const v of _this.contractList1) {
-            if (v.contractID === contractID) {
-              res = true
-              break
-            }
-            if (v.contractID === contract.contractID) {
-              res = true
-              break
-            }
-          }
+          // var res = false
+          // var _this = this
+          // // var contractlist = this.$store.state.dataShare.contractProcessList
+          // for (const v of _this.contractList1) {
+          //   if (v.contractID === contractID) {
+          //     res = true
+          //     break
+          //   }
+          //   if (v.contractID === contract.contractId) {
+          //     res = true
+          //     break
+          //   }
+          // }
           // 是合约
           if (res) {
             // 判断data中是否已经含有这两个节点了
@@ -631,7 +633,7 @@ export default {
               if (item.name === contractID) return true
             })
             var res2 = data.some((item) => {
-              if (item.name === contract.contractID) return true
+              if (item.name === contract.contractId) return true
             })
             // 含有该两个节点
             if (res1 && res2) {
@@ -639,7 +641,7 @@ export default {
               var res3 = links.some((item) => {
                 if (
                   item.source === contractID &&
-                  item.target === contract.contractID
+                  item.target === contract.contractId
                 ) {
                   item.value++
                   return true
@@ -649,7 +651,7 @@ export default {
               if (!res3) {
                 var temp1 = {
                   source: contractID,
-                  target: contract.contractID,
+                  target: contract.contractId,
                   value: 1
                 }
                 links.push(temp1)
@@ -666,15 +668,15 @@ export default {
               }
               if (!res2) {
                 var temp2 = {
-                  name: contract.contractID,
-                  value: contract.contractID.substring(0, 5),
+                  name: contract.contractId,
+                  value: contract.contractId.substring(0, 5),
                   category: 1
                 }
                 data.push(temp2)
               }
               temp1 = {
                 source: contractID,
-                target: contract.contractID.substring(0, 5),
+                target: contract.contractId.substring(0, 5),
                 value: 1
               }
               links.push(temp1)
@@ -691,7 +693,7 @@ export default {
               }
             })
             res2 = data.some((item) => {
-              if (item.name === contract.contractID) return true
+              if (item.name === contract.contractId) return true
             })
             // 含有该节点
             if (res1 && res2) {
@@ -699,7 +701,7 @@ export default {
               res3 = links.some((item) => {
                 if (
                   item.source === contractID &&
-                  item.target === contract.contractID
+                  item.target === contract.contractId
                 ) {
                   item.value++
                   return true
@@ -709,7 +711,7 @@ export default {
               if (!res3) {
                 const temp1 = {
                   source: contractID,
-                  target: contract.contractID,
+                  target: contract.contractId,
                   value: 1
                 }
                 links.push(temp1)
@@ -719,22 +721,22 @@ export default {
               if (!res1) {
                 const temp1 = {
                   name: contractID,
-                  value: contract.pubKey.substring(0, 5),
+                  value: contract.contractId.substring(0, 5),
                   category: 0
                 }
                 data.push(temp1)
               }
               if (!res2) {
                 const temp2 = {
-                  name: contract.contractID,
-                  value: contract.contractID.substring(0, 5),
+                  name: contract.contractId,
+                  value: contract.contractId.substring(0, 5),
                   category: 1
                 }
                 data.push(temp2)
               }
               const temp1 = {
                 source: contractID,
-                target: contract.contractID,
+                target: contract.contractId,
                 value: 1
               }
               links.push(temp1)
@@ -794,9 +796,11 @@ export default {
         // data为内部变量都是对象,用in访问
         for (const v in data) {
           for (const i of data[v].contracts) {
-            _this.contractIdList.push(i)
+            _this.contractIdList.push(i.contractID)
           }
         }
+        console.log('_this.contractIdList')
+        console.log(_this.contractIdList)
       })
     }).catch((error) => {
       console.log(error)
@@ -807,6 +811,7 @@ export default {
   methods: {
     getlist() {
       window.queryContractLogByOffset(this.count, 0, '')
+      console.log(this.contractProcessList)
       this.getContract(this.contractProcessList)
       for (const item of this.options1) {
         window.countContractLogGroupByCategory(this.getDateDaysBefore(item.value), this.getDateDaysBefore(0), this.interval[item.label], this.contractNameList)
@@ -854,7 +859,7 @@ export default {
         this.contractNameList += ','
         this.contractIdList.push(contract.id)
       }
-      // console.log('contractNameList')
+      console.log('contractNameList', this.contractNameList)
       if (this.contractNameList.length !== 0) {
         this.contractNameList = this.contractNameList.substring(0, this.contractNameList.length - 1)
         // console.log(this.contractNameList)
