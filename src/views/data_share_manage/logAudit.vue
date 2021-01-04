@@ -166,7 +166,6 @@ export default {
   name: 'LogAudit',
   filters: {
     formatTimes(updateDate) {
-      console.log(typeof updateDate)
       if (updateDate.constructor === String) {
         updateDate = Number(updateDate)
       }
@@ -575,7 +574,6 @@ export default {
     },
     contractLogList(nval) {
       this.list = JSON.parse(JSON.stringify(nval)).data.reverse()
-      console.log(this.list)
       this.listLoading = false
     },
     countContractLog: {
@@ -595,7 +593,6 @@ export default {
     },
     contractLogListByDate(nval) {
       const contractList = nval.data
-      console.log(nval.data)
       if (contractList.length !== 0) {
         // 将所有节点先放入图中
         var data = []
@@ -770,7 +767,6 @@ export default {
     var _this = this
     new Promise((resolve, reject) => {
       loginBaas().then((res) => {
-        console.log(res)
         if (res.status === 200) {
           var token = res.headers.get('authorization')
           resolve(token)
@@ -791,7 +787,6 @@ export default {
     }).then(function(result) {
       return new Promise((resolve, reject) => {
         var data = result.data.data
-        console.log(result)
         // var tempData = []
         // data为内部变量都是对象,用in访问
         for (const v in data) {
@@ -799,8 +794,6 @@ export default {
             _this.contractIdList.push(i.contractID)
           }
         }
-        console.log('_this.contractIdList')
-        console.log(_this.contractIdList)
       })
     }).catch((error) => {
       console.log(error)
@@ -811,7 +804,6 @@ export default {
   methods: {
     getlist() {
       window.queryContractLogByOffset(this.count, 0, '')
-      console.log(this.contractProcessList)
       this.getContract(this.contractProcessList)
       for (const item of this.options1) {
         window.countContractLogGroupByCategory(this.getDateDaysBefore(item.value), this.getDateDaysBefore(0), this.interval[item.label], this.contractNameList)
@@ -829,8 +821,6 @@ export default {
       this.chart3.showLoading()
       this.listLoading = true
       // window.queryContractLogByOffset(this.count, offset, '')
-
-      // console.log('listProjects')
       // window.listProjects()
     },
     changePubKeyIntoID(pubkey) {
@@ -859,18 +849,14 @@ export default {
         this.contractNameList += ','
         this.contractIdList.push(contract.id)
       }
-      console.log('contractNameList', this.contractNameList)
       if (this.contractNameList.length !== 0) {
         this.contractNameList = this.contractNameList.substring(0, this.contractNameList.length - 1)
-        // console.log(this.contractNameList)
         // window.countContractLogGroupByCategory(this.getDateDaysBefore(this.days2), this.getDateDaysBefore(0), this.interval2, this.contractNameList)
       } else {
         this.noDataShow('chart2')
       }
     },
     getChart1Data(countContractLog, days) {
-      // console.log('countContractLog[this.days1]')
-      // console.log(countContractLog[days])
       this.myOption1.xAxis[0].data = []
       for (let i = 1000 * 3600 * 24 * days / this.interval[days]; i > 0; i--) {
         const dateStr = new Date().toISOString().substring(0, 10)
