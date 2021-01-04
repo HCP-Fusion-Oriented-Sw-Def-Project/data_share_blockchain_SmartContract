@@ -559,12 +559,4 @@ export default {
 .hover {
   cursor: pointer;
 }
-.graph {
-  width: 1100px;
-  height: 600px;
-  margin: 0 auto;
-  margin-top: 20px;
-  border: 1px solid #dcdfe6;
-  border-radius: 5px;
-}
 </style>

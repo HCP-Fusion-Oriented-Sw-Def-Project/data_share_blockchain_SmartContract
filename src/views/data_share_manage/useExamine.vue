@@ -222,7 +222,7 @@ export default {
     // 获取申请
     getList() {
       this.listLoading = true
-      getAppliedList('1').then((res) => {
+      getAppliedList('0').then((res) => {
         console.log(res)
         if (res.data.code === 20000) {
           for (const v of res.data.data) {

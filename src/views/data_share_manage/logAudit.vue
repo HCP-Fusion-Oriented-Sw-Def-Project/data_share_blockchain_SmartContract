@@ -101,9 +101,12 @@
           type="index"
           :index="indexMethod"
         />
-        <el-table-column label="contractID">
+        <el-table-column
+          label="contractID"
+          align="center"
+        >
           <template slot-scope="scope">
-            <span>{{ scope.row.contractID }}</span>
+            <span>{{ scope.row.contractId }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -166,6 +169,7 @@ export default {
   name: 'LogAudit',
   filters: {
     formatTimes(updateDate) {
+      // console.log(typeof updateDate )
       if (updateDate.constructor === String) {
         updateDate = Number(updateDate)
       }
@@ -527,7 +531,8 @@ export default {
       contractNameList: '',
       contractIdList: [],
       listLoading: true,
-      contractList1: []
+      contractList1: [],
+      contractId: []
     }
   },
   computed: {
@@ -574,6 +579,7 @@ export default {
     },
     contractLogList(nval) {
       this.list = JSON.parse(JSON.stringify(nval)).data.reverse()
+      console.log(this.list)
       this.listLoading = false
     },
     countContractLog: {
@@ -598,27 +604,26 @@ export default {
         var data = []
         var links = []
         for (const contract of contractList) {
-          // console.log(contract.pubKey)
           // 将pubkey转换成合约ID,来判断此pubkey是用户还是合约
-          // var contractID = String(this.changePubKeyIntoID(contract.pubKey))
-          var contractID = String(contract.key)
-          // console.log(contractID)
+          var res = false
+          var contractID = String(this.changePubKeyIntoID(contract.key))
           // 判断用户还是合约
-          var res = this.$store.state.dataShare.contractProcessList.some(
+          res = this.contractId.some(
             (item) => {
-              if (item.id === contractID) return true
+              if (item === contractID) return true
             }
           )
+          if (res) console.log('hhhd')
           // 管理员：所有合约；普通用户：我的合约
-          // var res = false
-          // var _this = this
-          // // var contractlist = this.$store.state.dataShare.contractProcessList
+
+          var _this = this
+          // var contractlist = this.$store.state.dataShare.contractProcessList
           // for (const v of _this.contractList1) {
           //   if (v.contractID === contractID) {
           //     res = true
           //     break
           //   }
-          //   if (v.contractID === contract.contractId) {
+          //   if (v.contractID === contract.contractID) {
           //     res = true
           //     break
           //   }
@@ -673,12 +678,13 @@ export default {
               }
               temp1 = {
                 source: contractID,
-                target: contract.contractId.substring(0, 5),
+                target: contract.contractId,
                 value: 1
               }
               links.push(temp1)
             }
           } else {
+            if (contract.contractId === undefined) { continue }
             // 用户
             // if (store.state.user.roles.indexOf('admin') === -1 && contract.pubKey !== _this.$store.state.user.pubKey.split(',')[0]) {
             //     continue
@@ -718,7 +724,7 @@ export default {
               if (!res1) {
                 const temp1 = {
                   name: contractID,
-                  value: contract.contractId.substring(0, 5),
+                  value: contract.key.substring(0, 5),
                   category: 0
                 }
                 data.push(temp1)
@@ -767,6 +773,7 @@ export default {
     var _this = this
     new Promise((resolve, reject) => {
       loginBaas().then((res) => {
+        console.log(res)
         if (res.status === 200) {
           var token = res.headers.get('authorization')
           resolve(token)
@@ -787,11 +794,12 @@ export default {
     }).then(function(result) {
       return new Promise((resolve, reject) => {
         var data = result.data.data
+        console.log(result)
         // var tempData = []
         // data为内部变量都是对象,用in访问
         for (const v in data) {
           for (const i of data[v].contracts) {
-            _this.contractIdList.push(i.contractID)
+            _this.contractId.push(i.contractID)
           }
         }
       })
@@ -821,6 +829,8 @@ export default {
       this.chart3.showLoading()
       this.listLoading = true
       // window.queryContractLogByOffset(this.count, offset, '')
+
+      // console.log('listProjects')
       // window.listProjects()
     },
     changePubKeyIntoID(pubkey) {
@@ -849,14 +859,18 @@ export default {
         this.contractNameList += ','
         this.contractIdList.push(contract.id)
       }
+      // console.log('contractNameList')
       if (this.contractNameList.length !== 0) {
         this.contractNameList = this.contractNameList.substring(0, this.contractNameList.length - 1)
+        // console.log(this.contractNameList)
         // window.countContractLogGroupByCategory(this.getDateDaysBefore(this.days2), this.getDateDaysBefore(0), this.interval2, this.contractNameList)
       } else {
         this.noDataShow('chart2')
       }
     },
     getChart1Data(countContractLog, days) {
+      // console.log('countContractLog[this.days1]')
+      // console.log(countContractLog[days])
       this.myOption1.xAxis[0].data = []
       for (let i = 1000 * 3600 * 24 * days / this.interval[days]; i > 0; i--) {
         const dateStr = new Date().toISOString().substring(0, 10)
