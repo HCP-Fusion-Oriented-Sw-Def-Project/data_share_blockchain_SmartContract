@@ -254,6 +254,31 @@ export const asyncRoutes = [
     }]
   },
   {
+    path: '/DynamicCode',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'DynamicCode',
+    meta: {
+      title: '动态码',
+      noCache: true,
+      icon: '',
+      roles: ['admin', 'provider']
+    },
+    children: [
+      {
+        path: 'DynamicCode',
+        component: () => import('@/views/DynamicCode/DynamicCode'),
+        name: 'DynamicCode',
+        meta: {
+          title: '动态码',
+          icon: 'DynamicCode',
+          noCache: true,
+          roles: ['admin', 'provider']
+        }
+      }
+    ]
+  },
+  {
     path: '/data_share_manage',
     component: Layout,
     redirect: 'noredirect',

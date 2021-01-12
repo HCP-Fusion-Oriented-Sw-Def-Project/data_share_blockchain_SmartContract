@@ -147,7 +147,7 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
+        username: 'HdOilProduct',
         password: 'test@123',
         imageCode: '',
         randomStr: ''
