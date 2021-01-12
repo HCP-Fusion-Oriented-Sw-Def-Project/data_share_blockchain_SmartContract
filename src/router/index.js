@@ -197,62 +197,62 @@ export const asyncRoutes = [
     },
     ],
   },
-  {
-    path: '/blockchain_search',
-    component: Layout,
-    redirect: 'noredirect',
-    name: 'blockchain_search',
-    meta: {
-      title: '供应链查询',
-      noCache: true,
-      icon: 'provide',
-      roles: ['admin', 'provider']
-    },
-    children: [{
-      path: 'search',
-      component: () => import('@/views/blockchain_search/search'),
-      name: 'search',
-      meta: {
-        title: '供应链查询',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    },
-    {
-      path: 'process',
-      component: () => import('@/views/blockchain_search/process'),
-      name: 'process',
-      hidden: true,
-      meta: {
-        title: '供应链流程',
-        icon: '',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    }, {
-      path: 'result',
-      component: () => import('@/views/blockchain_search/result'),
-      name: 'result',
-      hidden: true,
-      meta: {
-        title: '查询结果',
-        icon: '',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    }, {
-      path: 'graph',
-      component: () => import('@/views/blockchain_search/graph'),
-      name: 'graph',
-      hidden: true,
-      meta: {
-        title: '全链条追溯',
-        icon: '',
-        noCache: true,
-        roles: ['admin', 'provider']
-      }
-    }]
-  },
+  // {
+  //   path: '/blockchain_search',
+  //   component: Layout,
+  //   redirect: 'noredirect',
+  //   name: 'blockchain_search',
+  //   meta: {
+  //     title: '供应链查询',
+  //     noCache: true,
+  //     icon: 'provide',
+  //     roles: ['admin', 'provider']
+  //   },
+  //   children: [{
+  //     path: 'search',
+  //     component: () => import('@/views/blockchain_search/search'),
+  //     name: 'search',
+  //     meta: {
+  //       title: '供应链查询',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   },
+  //   {
+  //     path: 'process',
+  //     component: () => import('@/views/blockchain_search/process'),
+  //     name: 'process',
+  //     hidden: true,
+  //     meta: {
+  //       title: '供应链流程',
+  //       icon: '',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   }, {
+  //     path: 'result',
+  //     component: () => import('@/views/blockchain_search/result'),
+  //     name: 'result',
+  //     hidden: true,
+  //     meta: {
+  //       title: '查询结果',
+  //       icon: '',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   }, {
+  //     path: 'graph',
+  //     component: () => import('@/views/blockchain_search/graph'),
+  //     name: 'graph',
+  //     hidden: true,
+  //     meta: {
+  //       title: '全链条追溯',
+  //       icon: '',
+  //       noCache: true,
+  //       roles: ['admin', 'provider']
+  //     }
+  //   }]
+  // },
   {
     path: '/DynamicCode',
     component: Layout,

@@ -10,7 +10,7 @@ export function loginBaas() {
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin'
     },
-    referrer: 'https://trybaas.internetapi.cn/',
+    referrer: 'https://trybaas.internetapi.cn',
     referrerPolicy: 'strict-origin-when-cross-origin',
     body: JSON.stringify({ email: 'demo@bdware.org', password: 'test@123' }),
     method: 'POST',

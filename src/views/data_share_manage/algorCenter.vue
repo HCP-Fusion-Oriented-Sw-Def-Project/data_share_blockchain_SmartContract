@@ -168,7 +168,7 @@ export default {
   },
   created() {
     this.$store.commit('setContractKey', '04c4c855862b53f323e077ccfcc744ecc2c0a04645ed16d99ede8fd5866b38c0670a97ad22c6260d1a4672aba2a5fe229a2d4eba34627c054aab102620afa288c1' + ',dc19f5a32466a89f6abcaf11e1477817b960c6dec120e1026960eb049cb5c5ac')
-    this.$store.commit('setNodeAddr', '39.104.201.40:21030')
+    this.$store.commit('setNodeAddr', '39.104.208.148:21030')
     initWSocket()
     setTimeout(() => {
       this.getAlgorithmList()

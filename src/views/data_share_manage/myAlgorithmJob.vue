@@ -529,7 +529,7 @@ export default {
         file: row.algorithmpath,
         args: args1
       }
-      var arg = { url: 'http://152.136.214.48:8998/batches/', data: JSON.stringify(data) }
+      var arg = { url: 'http://152.136.214.48:8999/batches/', data: JSON.stringify(data) }
       window.executeContract('algoModule', 'executeByLivy', JSON.stringify(arg), (res) => {
         console.log(res)
       })

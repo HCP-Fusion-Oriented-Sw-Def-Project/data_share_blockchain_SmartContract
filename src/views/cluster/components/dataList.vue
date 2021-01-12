@@ -30,54 +30,52 @@
       <span style="font-size:15px; font-weight:bold;">数据清单:</span>
     </div>
 
-    <div class="table">
-      <el-table
-        :key="tableKey"
-        v-loading="listLoading"
-        :data="dataList"
-        element-loading-text="给我一点时间"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-        :height="fullHeight-300"
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="dataList"
+      element-loading-text="给我一点时间"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+      :height="fullHeight-300"
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column align="center" label width="65" type="index" />
+      <el-table-column align="center" label="名称">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contractName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="合约ID">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contractID }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="所属类别">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="操作"
+        width="305px"
+        class-name="small-padding fixed-width"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="center" label width="65" type="index" />
-        <el-table-column align="center" label="名称" width="150px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.contractName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="合约ID" width="150px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.contractID }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="所属类别" width="150px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.type }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="305px"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              style="margin-left:10px"
-              @click="useData(scope.row)"
-            >
-              使用
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            size="mini"
+            style="margin-left:10px"
+            @click="useData(scope.row)"
+          >
+            使用
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
     <el-dialog v-dialogDrag title="数据详情" :visible.sync="dialogDataList" width="1300px" top="7vh">
       <div v-if="dialogDataList">
