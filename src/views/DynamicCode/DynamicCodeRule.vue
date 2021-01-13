@@ -66,8 +66,13 @@
       style="margin-top: 20px;"
     >
       <el-table-column
-        label="产品名称"
+        label="规则名称"
         prop="name"
+        align="center"
+      />
+      <el-table-column
+        label="产品名称"
+        prop="productName"
         align="center"
       />
       <el-table-column
@@ -87,7 +92,7 @@
         prop="format"
         align="center"
       />
-      <el-table-column
+      <!-- <el-table-column
         label="生产日期"
         align="center"
       >
@@ -102,28 +107,28 @@
         <template v-slot="scope">
           <span>{{ scope.row.deadline| formatTimes }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <!-- <el-table-column
         label="注意事项"
         prop="notes"
         align="center"
       /> -->
       <el-table-column
-        label="动态码"
+        label="动态码链接"
         prop="dynamicCode"
         align="center"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.dynamicCode.substring(0,10)+'...' }}</span>
+          <span>{{ scope.row.generatecodeApi.substring(0,33)+"..." }}</span>
           <el-button
             id="copy_text"
             ref="copy"
             type="info"
             size="mini"
-            :data-clipboard-text="scope.row.dynamicCode"
+            :data-clipboard-text="scope.row.generatecodeApi"
             @click="copy"
           >
-            复制动态码
+            复制链接
           </el-button>
         </template>
       </el-table-column>
@@ -196,13 +201,13 @@
       width="30%"
       @close="handleClose"
     >
-      <div style="width: 400px; margin:0 auto;">
+      <div style="width: 450px; margin:0 auto;">
         <el-form
           :model="dynamicObj"
           label-position="right"
           label-width="150px"
         >
-          <el-form-item label="产品名称:">
+          <el-form-item label="规则名称:">
             <el-input
               v-model="dynamicObj.name"
               autocomplete="off"
@@ -230,16 +235,16 @@
             />
           </el-form-item>
           <el-form-item
-            v-if="dynamicObj.dynamicCode !== undefined"
-            label="动态码:"
+            v-if="dynamicObj.generatecodeApi !== undefined"
+            label="动态码链接:"
           >
             <el-input
-              v-model="dynamicObj.dynamicCode"
+              v-model="dynamicObj.generatecodeApi"
               type="textarea"
               :rows="3"
             />
           </el-form-item>
-          <el-form-item label="生产日期:">
+          <!-- <el-form-item label="生产日期:">
             <el-date-picker
               v-model="dynamicObj.productDate"
               type="date"
@@ -252,11 +257,24 @@
               type="date"
               placeholder="选择日期"
             />
+          </el-form-item> -->
+          <el-form-item label="产品名称">
+            <el-input
+              v-model="dynamicObj.productName"
+              style="width: 200px;"
+            />
+          </el-form-item>
+          <el-form-item label="主成分">
+            <el-input
+              v-model="dynamicObj.materialName"
+              style="width: 200px;"
+            />
           </el-form-item>
           <el-form-item label="注意事项:">
             <el-input
               v-model="dynamicObj.notes"
               style="width: 200px;"
+              type="textarea"
             />
           </el-form-item>
         </el-form>
@@ -281,7 +299,7 @@
 </template>
 
 <script>
-import { getDynamicList, addDynamic, deleteDynamic } from '@/api/dynamic'
+import { dynamicRuleList, addDynamicRule, deleteDynamicRule } from '@/api/dynamic'
 import Clipboard from 'clipboard'
 export default {
   filters: {
@@ -348,7 +366,7 @@ export default {
   },
   methods: {
     getDynamicList() {
-      getDynamicList(this.listQuery).then((res) => {
+      dynamicRuleList(this.listQuery).then((res) => {
         console.log(res)
         this.dynamiccodeList = res.data.data.list
         this.total = res.data.data.totalSize
@@ -368,7 +386,7 @@ export default {
     },
     createData() {
       if (this.dialogStatus === 'create') {
-        addDynamic(this.dynamicObj).then((res) => {
+        addDynamicRule(this.dynamicObj).then((res) => {
           if (res.data.code === 20000) {
             this.getDynamicList()
             this.reset()
@@ -389,7 +407,7 @@ export default {
       this.$refs['btn' + index].$el.click()
     },
     handleDelete(row) {
-      deleteDynamic(row.id).then((res) => {
+      deleteDynamicRule(row.id).then((res) => {
         this.getDynamicList()
       })
     },

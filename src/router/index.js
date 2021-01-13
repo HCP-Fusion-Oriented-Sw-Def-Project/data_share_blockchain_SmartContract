@@ -261,7 +261,7 @@ export const asyncRoutes = [
     meta: {
       title: '动态码',
       noCache: true,
-      icon: '',
+      icon: 'Dynamic',
       roles: ['admin', 'provider']
     },
     children: [
@@ -272,6 +272,17 @@ export const asyncRoutes = [
         meta: {
           title: '动态码',
           icon: 'DynamicCode',
+          noCache: true,
+          roles: ['admin', 'provider']
+        }
+      },
+      {
+        path: 'DynamicCodeRule',
+        component: () => import('@/views/DynamicCode/DynamicCodeRule'),
+        name: 'DynamicCode',
+        meta: {
+          title: '动态码规则',
+          icon: 'DynamicCodeRule',
           noCache: true,
           roles: ['admin', 'provider']
         }

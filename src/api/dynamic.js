@@ -28,3 +28,32 @@ export function deleteDynamic(data) {
     data
   })
 }
+
+export function dynamicRuleList(data) {
+  return request({
+    url: '/marketCodeRule',
+    method: 'get',
+    params: {
+      'pageNum': data.page,
+      'pageSize': data.size,
+      'name': data.name,
+      'productType': data.productType
+    }
+  })
+}
+
+export function addDynamicRule(data) {
+  return request({
+    url: '/marketCodeRule',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteDynamicRule(data) {
+  return request({
+    url: '/marketCodeRule',
+    method: 'delete',
+    data
+  })
+}
