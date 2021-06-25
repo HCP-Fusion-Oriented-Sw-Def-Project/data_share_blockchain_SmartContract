@@ -197,62 +197,62 @@ export const asyncRoutes = [
     },
     ],
   },
-  // {
-  //   path: '/blockchain_search',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   name: 'blockchain_search',
-  //   meta: {
-  //     title: '供应链查询',
-  //     noCache: true,
-  //     icon: 'provide',
-  //     roles: ['admin', 'provider']
-  //   },
-  //   children: [{
-  //     path: 'search',
-  //     component: () => import('@/views/blockchain_search/search'),
-  //     name: 'search',
-  //     meta: {
-  //       title: '供应链查询',
-  //       noCache: true,
-  //       roles: ['admin', 'provider']
-  //     }
-  //   },
-  //   {
-  //     path: 'process',
-  //     component: () => import('@/views/blockchain_search/process'),
-  //     name: 'process',
-  //     hidden: true,
-  //     meta: {
-  //       title: '供应链流程',
-  //       icon: '',
-  //       noCache: true,
-  //       roles: ['admin', 'provider']
-  //     }
-  //   }, {
-  //     path: 'result',
-  //     component: () => import('@/views/blockchain_search/result'),
-  //     name: 'result',
-  //     hidden: true,
-  //     meta: {
-  //       title: '查询结果',
-  //       icon: '',
-  //       noCache: true,
-  //       roles: ['admin', 'provider']
-  //     }
-  //   }, {
-  //     path: 'graph',
-  //     component: () => import('@/views/blockchain_search/graph'),
-  //     name: 'graph',
-  //     hidden: true,
-  //     meta: {
-  //       title: '全链条追溯',
-  //       icon: '',
-  //       noCache: true,
-  //       roles: ['admin', 'provider']
-  //     }
-  //   }]
-  // },
+  {
+    path: '/blockchain_search',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'blockchain_search',
+    meta: {
+      title: '供应链查询',
+      noCache: true,
+      icon: 'provide',
+      roles: ['admin', 'provider']
+    },
+    children: [{
+      path: 'search',
+      component: () => import('@/views/blockchain_search/search'),
+      name: 'search',
+      meta: {
+        title: '供应链查询',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
+    },
+    {
+      path: 'process',
+      component: () => import('@/views/blockchain_search/process'),
+      name: 'process',
+      hidden: true,
+      meta: {
+        title: '供应链流程',
+        icon: '',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
+    }, {
+      path: 'result',
+      component: () => import('@/views/blockchain_search/result'),
+      name: 'result',
+      hidden: true,
+      meta: {
+        title: '查询结果',
+        icon: '',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
+    }, {
+      path: 'graph',
+      component: () => import('@/views/blockchain_search/graph'),
+      name: 'graph',
+      hidden: true,
+      meta: {
+        title: '全链条追溯',
+        icon: '',
+        noCache: true,
+        roles: ['admin', 'provider']
+      }
+    }]
+  },
   {
     path: '/DynamicCode',
     component: Layout,
@@ -295,7 +295,7 @@ export const asyncRoutes = [
     redirect: 'noredirect',
     name: 'data_share_manage',
     meta: {
-      title: '数据共享管理',
+      title: '数据共享分发',
       icon: 'data_share_manage',
       noCache: true,
       roles: ['admin', 'dataUser', 'provider'],
@@ -425,6 +425,140 @@ export const asyncRoutes = [
       path: 'myAlgorithmJob',
       name: 'myAlgorithmJob',
       component: () => import('@/views/data_share_manage/myAlgorithmJob'),
+      meta: {
+        title: '算法作业',
+        icon: 'algorList',
+        noCache: true,
+        roles: ['dataUser', 'admin']
+      },
+    }
+    ],
+  },
+  {
+    path: '/data_share_manage_private',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'data_share_manage_private',
+    meta: {
+      title: '数据共享集成',
+      icon: 'data_share_manage',
+      noCache: true,
+      roles: ['admin', 'dataUser', 'provider'],
+    },
+    children: [{
+      path: 'myShare',
+      component: () => import('@/views/data_share_manage_private/myShare'),
+      name: 'myShare',
+      meta: {
+        title: '数据共享',
+        icon: 'data_share',
+        noCache: true,
+        roles: ['admin', 'provider']
+      },
+    },
+    {
+      path: 'dataList',
+      component: () => import('@/views/data_share_manage_private/dataList'),
+      name: 'dataList',
+      meta: {
+        title: '数据清单',
+        icon: 'data_list',
+        noCache: true,
+        roles: ['admin', 'dataUser']
+      },
+    },
+    {
+      path: 'typeManage',
+      component: () => import('@/views/data_share_manage_private/typeManage'),
+      name: 'typeManage',
+      meta: {
+        title: '类别管理',
+        icon: 'data_manage',
+        noCache: true,
+      },
+    },
+    {
+      path: 'useExamine',
+      component: () => import('@/views/data_share_manage_private/useExamine'),
+      name: 'useExamine',
+      meta: {
+        title: '使用审核',
+        icon: 'examine',
+        noCache: true,
+        roles: ['provider']
+      },
+    },
+    {
+      path: 'shareExamine',
+      component: () => import('@/views/data_share_manage_private/shareExamine'),
+      name: 'examine',
+      meta: {
+        title: '共享审核',
+        icon: 'examine2',
+        noCache: true,
+        roles: ['admin']
+      },
+    },
+    {
+      path: 'myApplication',
+      component: () => import('@/views/data_share_manage_private/myApplication'),
+      name: 'myApplication',
+      meta: {
+        title: '我的申请',
+        icon: 'list',
+        noCache: true,
+        roles: ['dataUser']
+      },
+    },
+    {
+      path: 'applicationHistory',
+      name: 'applicationHistory',
+      hidden: true,
+      component: () => import('@/views/data_share_manage_private/applicationHistory'),
+      meta: {
+        title: '历史记录',
+        noCache: true,
+        roles: ['dataUser']
+      },
+    },
+    {
+      path: 'logAudit',
+      name: 'logAudit',
+      component: () => import('@/views/data_share_manage_private/logAudit'),
+      meta: {
+        title: '日志审计',
+        icon: 'menu',
+        noCache: true,
+        roles: ['dataUser', 'provider']
+      },
+    },
+    {
+      path: 'algorCenter',
+      name: 'algorCenter',
+      component: () => import('@/views/data_share_manage_private/algorCenter'),
+      meta: {
+        title: '算法中心',
+        icon: 'algor',
+        noCache: true,
+        roles: ['dataUser', 'admin']
+      },
+    },
+    {
+      path: 'addAlgorithmJob',
+      name: 'addAlgorithmJob',
+      hidden: true,
+      component: () => import('@/views/data_share_manage_private/addAlgorithmJob'),
+      meta: {
+        title: '新增算法作业',
+        icon: 'algorJob',
+        noCache: true,
+        roles: ['dataUser', 'admin']
+      },
+    },
+    {
+      path: 'myAlgorithmJob',
+      name: 'myAlgorithmJob',
+      component: () => import('@/views/data_share_manage_private/myAlgorithmJob'),
       meta: {
         title: '算法作业',
         icon: 'algorList',
