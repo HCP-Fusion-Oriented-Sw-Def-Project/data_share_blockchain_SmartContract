@@ -193,7 +193,7 @@
 <script>
 import waves from '@/directive/waves' // 水波纹指令
 import editShare from './edit-share'
-import { getDataShareInfoBase, getMyShareParam, addApplication, getMyApplicationStatus } from '@/api/dataShare'
+import { getDataShareInfoBase, getMyShareParam, addApplication, getMyApplicationStatus } from '@/api/dataShareByDb'
 export default {
   directives: {
     waves
@@ -252,6 +252,7 @@ export default {
     getDataList() {
       this.listLoading = true
       getDataShareInfoBase(this.listQuery).then((res) => {
+        console.log(res)
         if (res.data.code === 20000) {
           this.dataList = res.data.data.list
           this.total = res.data.data.totalSize
@@ -331,7 +332,7 @@ export default {
                     discription: row.shareDescription,
                     dataTable: row.dataTable
                   },
-                  tableData: res.data.data.dataShareInfoFieldList,
+                  tableData: res.data.data.dataShareByDbInfoFieldList,
                   isAllEdited: true,
                   isPartEdited: true
                 }
@@ -373,7 +374,7 @@ export default {
     },
     apply() {
       const tempData = {
-        dataShareInfoBaseId: this.data.id,
+        dataShareByDbInfoBaseId: this.data.id,
         useDescription: this.applyReason,
         applicant: 'pubkey'
       }

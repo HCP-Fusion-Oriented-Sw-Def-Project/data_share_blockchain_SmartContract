@@ -312,7 +312,7 @@ import {
   editDataShareStatus,
   deleteDataShareByIds,
   editMyShare
-} from '@/api/dataShare'
+} from '@/api/dataShareByDb'
 export default {
   directives: {
     waves
@@ -412,7 +412,7 @@ export default {
   },
   computed: {
     dataFromChild() {
-      return this.$store.state.dataShare.dataToPar
+      return this.$store.state.dataShareByDb.dataToPar
     },
   },
   watch: {
@@ -641,7 +641,7 @@ export default {
       this.getShareList()
     },
     // getId(){
-    //     killContractProcess(this.$store.state.dataShare.startContract.cid);
+    //     killContractProcess(this.$store.state.dataShareByDb.startContract.cid);
 
     // }
     // // 创建我的共享数据

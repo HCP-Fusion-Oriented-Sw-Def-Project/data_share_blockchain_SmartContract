@@ -249,7 +249,7 @@
 
 <script>
 import waves from '@/directive/waves'
-import { getMyApplication } from '@/api/dataShare'
+import { getMyApplication } from '@/api/dataShareByDb'
 export default {
   directives: {
     waves

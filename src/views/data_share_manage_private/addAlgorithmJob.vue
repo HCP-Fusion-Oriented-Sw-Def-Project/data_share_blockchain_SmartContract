@@ -307,7 +307,7 @@
 <script>
 import { addAlgoTask, modifyAlgoTask } from '@/api/algoTask'
 import { getAlgorithmList, getParameter } from '@/api/algoParameter'
-import { getPassData } from '@/api/dataShare'
+import { getPassData } from '@/api/dataShareByDb'
 export default {
   data() {
     var validateName = (rule, value, callback) => {

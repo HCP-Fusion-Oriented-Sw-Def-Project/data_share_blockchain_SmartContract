@@ -163,7 +163,7 @@
 
 <script>
 import waves from '@/directive/waves'
-import { getAppliedList, getJudgeAccess } from '@/api/dataShare'
+import { getAppliedList, getJudgeAccess } from '@/api/dataShareByDb'
 export default {
   name: 'UseExamine',
   directives: {

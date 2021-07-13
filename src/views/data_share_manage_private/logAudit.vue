@@ -4,7 +4,10 @@
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日调用数量统计</label>
-          <el-select v-model="days1" size="mini">
+          <el-select
+            v-model="days1"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -14,12 +17,18 @@
           </el-select>
           <label>天数：</label>
         </el-row>
-        <div id="chart1" :style="{ height: '400px', width: '400px' }"></div>
+        <div
+          id="chart1"
+          :style="{ height: '400px', width: '400px' }"
+        ></div>
       </el-col>
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日不同数据合约的调用统计</label>
-          <el-select v-model="days2" size="mini">
+          <el-select
+            v-model="days2"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -29,12 +38,18 @@
           </el-select>
           <label>天数：</label>
         </el-row>
-        <div id="chart2" :style="{ height: '400px', width: '400px' }"></div>
+        <div
+          id="chart2"
+          :style="{ height: '400px', width: '400px' }"
+        ></div>
       </el-col>
       <el-col :span="8">
         <el-row class="chartHeader">
           <label>前k日调用合约关系图</label>
-          <el-select v-model="days3" size="mini">
+          <el-select
+            v-model="days3"
+            size="mini"
+          >
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -58,9 +73,7 @@
     </el-row>
     <el-row>
       <el-row style="width: 100%">
-        <label
-          style="color: #606266; font-size: 18px; float: left"
-        >近期日志</label>
+        <label style="color: #606266; font-size: 18px; float: left">近期日志</label>
         <el-select
           v-model="count"
           style="float: right; margin-bottom: 5px"
@@ -73,9 +86,7 @@
             :value="item.value"
           />
         </el-select>
-        <label
-          style="color: #606266; font-size: 14px; float: right; margin-top: 8px"
-        >条数范围：</label>
+        <label style="color: #606266; font-size: 14px; float: right; margin-top: 8px">条数范围：</label>
       </el-row>
       <el-table
         v-loading="listLoading"
@@ -95,22 +106,34 @@
             <span>{{ scope.row.contractID }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="contractName">
+        <el-table-column
+          align="center"
+          label="contractName"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.contractName }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="function">
+        <el-table-column
+          align="center"
+          label="function"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.function }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="costTime">
+        <el-table-column
+          align="center"
+          label="costTime"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.costTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="date">
+        <el-table-column
+          align="center"
+          label="date"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.date | formatTimes }}</span>
           </template>
